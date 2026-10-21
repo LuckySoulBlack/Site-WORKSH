@@ -1,31 +1,593 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081329">
-<meta name="description" content="WORKSH: plataforma inteligente para projetos, tarefas, equipes e resultados. Organize. Conecte. Conquiste.">
-<meta property="og:title" content="WORKSH — Organize. Conecte. Conquiste."><meta property="og:description" content="Seu trabalho, tudo em um só lugar."><meta property="og:type" content="website">
-<title>WORKSH | Organize. Conecte. Conquiste.</title><link rel="icon" href="assets/logo.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"><script defer src="script.js"></script>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="#081329" name="theme-color"/>
+<meta content="WORKSH: plataforma inteligente para projetos, tarefas, equipes e resultados. Organize. Conecte. Conquiste." name="description"/>
+<meta content="WORKSH — Organize. Conecte. Conquiste." property="og:title"/>
+<meta content="Seu trabalho, tudo em um só lugar." property="og:description"/>
+<meta content="website" property="og:type"/>
+<title>
+   WORKSH | Organize. Conecte. Conquiste.
+  </title>
+<link href="assets/logo.svg" rel="icon" type="image/svg+xml"/>
+<link href="style.css" rel="stylesheet"/>
+<script defer="" src="script.js">
+</script>
 </head>
 <body>
-<a href="#conteudo" class="skip">Pular para o conteúdo</a>
-<header class="site-header" id="topo"><div class="container nav-inner">
-<a class="brand" href="#inicio" aria-label="WORKSH, início"><img src="assets/logo.svg" width="43" height="43" alt=""><span>WORK<span class="blue">SH</span></span></a>
-<nav class="desktop-nav" aria-label="Menu principal"><a href="#plataforma">Plataforma</a><a href="#recursos">Recursos</a><a href="#como-funciona">Como funciona</a><a href="#sobre">Sobre</a><a href="#contato">Contato</a></nav>
-<div class="nav-actions"><button type="button" class="btn btn-outline nav-login" data-open-workspace>Entrar no Workspace <span aria-hidden="true">↗</span></button><button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button></div></div>
-<nav id="mobileNav" class="mobile-nav" aria-label="Menu para celular" hidden><a href="#plataforma">Plataforma</a><a href="#recursos">Recursos</a><a href="#como-funciona">Como funciona</a><a href="#sobre">Sobre</a><a href="#contato">Contato</a><button data-open-workspace class="btn btn-primary">Entrar no Workspace ↗</button></nav>
+<a class="skip" href="#conteudo">
+   Pular para o conteúdo
+  </a>
+<header class="site-header" id="topo">
+<div class="container nav-inner">
+<a aria-label="WORKSH, início" class="brand" href="#inicio">
+<img alt="" height="43" src="assets/logo.svg" width="43"/>
+<span>
+      WORK
+      <span class="blue">
+       SH
+      </span>
+</span>
+</a>
+<nav aria-label="Menu principal" class="desktop-nav">
+<a href="#plataforma">
+      Plataforma
+     </a>
+<a href="#recursos">
+      Recursos
+     </a>
+<a href="#como-funciona">
+      Como funciona
+     </a>
+<a href="#sobre">
+      Sobre
+     </a>
+<a href="#contato">
+      Contato
+     </a>
+</nav>
+<div class="nav-actions">
+<button class="btn btn-outline nav-login" data-open-workspace="" type="button">
+      Entrar no Workspace
+      <span aria-hidden="true">
+       ↗
+      </span>
+</button>
+<button aria-controls="mobileNav" aria-expanded="false" aria-label="Abrir menu" class="menu-toggle" id="menuToggle" type="button">
+<span>
+</span>
+<span>
+</span>
+<span>
+</span>
+</button>
+</div>
+</div>
+<nav aria-label="Menu para celular" class="mobile-nav" hidden="" id="mobileNav">
+<a href="#plataforma">
+     Plataforma
+    </a>
+<a href="#recursos">
+     Recursos
+    </a>
+<a href="#como-funciona">
+     Como funciona
+    </a>
+<a href="#sobre">
+     Sobre
+    </a>
+<a href="#contato">
+     Contato
+    </a>
+<button class="btn btn-primary" data-open-workspace="">
+     Entrar no Workspace ↗
+    </button>
+</nav>
 </header>
 <main id="conteudo">
-<section class="hero" id="inicio"><div class="glow g1"></div><div class="glow g2"></div><div class="container hero-grid">
-<div class="hero-copy reveal"><div class="eyebrow"><span class="pulse"></span> UM NOVO JEITO DE TRABALHAR</div><h1>Mais conexão.<br>Menos complicação.<br><span class="gradient-text">Mais resultados.</span></h1><p>Projetos, tarefas, pessoas e processos em um único lugar. A WORKSH transforma a rotina da sua equipe em colaboração de verdade.</p><div class="hero-actions"><a class="btn btn-primary btn-lg" href="#plataforma">Explore a plataforma <span>→</span></a><button class="btn btn-glass btn-lg" data-open-workspace>Entrar no Workspace ↗</button></div><div class="hero-proof"><div class="proof-dots"><i></i><i></i><i></i><i></i></div><span>Planeje com clareza. Execute com confiança.</span></div></div>
-<div class="hero-visual reveal" aria-label="Prévia ilustrativa da plataforma WORKSH"><div class="floating f1">✦ <span>Equipe conectada</span></div><div class="floating f2"><b>✓</b><span>Etapa concluída!</span></div><div class="dashboard-window"><div class="window-top"><div class="traffic"><b></b><b></b><b></b></div><span>worksh / workspace</span><span>•••</span></div><div class="dashboard-body"><aside class="dash-sidebar"><div class="dash-brand"><img src="assets/logo.svg" alt=""> W<span>SH</span></div><div class="dash-side-item active">◧ <span>Visão geral</span></div><div class="dash-side-item">▤ <span>Projetos</span></div><div class="dash-side-item">☑ <span>Minhas tarefas</span></div><div class="dash-side-item">♧ <span>Equipes</span></div><div class="dash-side-item">▦ <span>Relatórios</span></div><div class="dash-side-item">⚡ <span>Automações</span></div></aside><div class="dash-main"><div class="dash-heading"><div><small>MEU WORKSPACE</small><h3>Olá, equipe! <span>👋</span></h3></div><div class="dash-avatar">W</div></div><div class="dash-stats"><div><span>Projetos ativos</span><strong>12</strong><small>↗ em andamento</small></div><div><span>Tarefas concluídas</span><strong>84</strong><small>✓ nesta semana</small></div><div><span>Colaboração</span><strong>98%</strong><small>↗ em alta</small></div></div><div class="board-title"><strong>Projetos em andamento</strong><span>▦ Quadro</span></div><div class="mini-board"><div class="mini-col"><label>● A fazer</label><div class="mini-card"><b>Nova identidade</b><small>Design & produto</small><div class="tag purple">Design</div></div><div class="mini-card"><b>Planejar campanha</b><small>Marketing</small><div class="tag orange">Planejamento</div></div></div><div class="mini-col"><label>● Em andamento</label><div class="mini-card"><b>Plataforma web</b><small>Desenvolvimento</small><div class="progress"><i style="width:72%"></i></div></div><div class="mini-card"><b>Fluxo de aprovação</b><small>Operações</small><div class="progress"><i style="width:46%"></i></div></div></div><div class="mini-col"><label>● Concluído</label><div class="mini-card"><b>Workshop de equipe</b><small>Colaboração</small><span class="done">✓ Concluído</span></div><div class="mini-card"><b>Mapa de processos</b><small>Estratégia</small><span class="done">✓ Concluído</span></div></div></div></div></div></div></div>
-</div><div class="container scroll-hint"><span>DESCUBRA O QUE É POSSÍVEL</span><span>↓</span></div></section>
-<section class="trust-strip"><div class="container trust-grid"><span>UMA PLATAFORMA. INÚMERAS POSSIBILIDADES.</span><strong>PROJETOS</strong><strong>TAREFAS</strong><strong>EQUIPES</strong><strong>AUTOMAÇÕES</strong><strong>RESULTADOS</strong></div></section>
-<section class="section section-light" id="plataforma"><div class="container"><div class="section-heading centered reveal"><span class="section-kicker">CONHEÇA A WORKSH</span><h2>Seu trabalho merece<br><span class="gradient-text">um lugar melhor.</span></h2><p>Da ideia à entrega, toda a equipe acompanha cada etapa com organização, transparência e agilidade.</p></div><div class="features-featured"><article class="feature-big dark-card reveal"><div class="chip">VISÃO COMPLETA</div><h3>Tudo acontece<br>em um só lugar.</h3><p>Menos abas, menos planilhas, menos ruído. Tenha uma visão clara de tarefas, entregas e responsáveis.</p><div class="visual-orbit"><img src="assets/logo.svg" alt=""><span class="satellite s1">Projetos</span><span class="satellite s2">Pessoas</span><span class="satellite s3">Resultados</span></div></article><article class="feature-small reveal"><div class="big-icon purple-bg">▦</div><h3>Visualize do seu jeito</h3><p>Quadros Kanban, listas, calendários e painéis para acompanhar seu trabalho do planejamento à entrega.</p><div class="tiny-lines"><span></span><span></span><span></span></div></article><article class="feature-small reveal"><div class="big-icon green-bg">↗</div><h3>Avance em equipe</h3><p>Reúna atualizações, responsáveis, prazos e conversas em um ambiente compartilhado.</p><div class="avatars"><i>AL</i><i>ML</i><i>RB</i><i>+4</i></div></article></div></div></section>
-<section class="section section-soft" id="recursos"><div class="container"><div class="section-heading reveal"><span class="section-kicker">FEITA PARA O DIA A DIA</span><h2>Funcionalidades para<br><span class="gradient-text">tirar as ideias do papel.</span></h2><p>Uma experiência criada para fazer a produtividade fluir, sem perder a simplicidade.</p></div><div class="resource-grid"><article class="resource-card reveal"><div class="resource-icon blue-bg">▤</div><h3>Gestão de projetos</h3><p>Organize atividades, prioridades, entregas e responsáveis em espaços compartilhados.</p></article><article class="resource-card reveal"><div class="resource-icon purple-bg">☑</div><h3>Tarefas e prazos</h3><p>Saiba o que precisa ser feito, por quem e quando, sem perder o contexto.</p></article><article class="resource-card reveal"><div class="resource-icon green-bg">♧</div><h3>Colaboração</h3><p>Aproxime pessoas e áreas com informações organizadas em um só fluxo.</p></article><article class="resource-card reveal"><div class="resource-icon orange-bg">▦</div><h3>Dashboards</h3><p>Transforme o andamento dos projetos em indicadores claros e úteis.</p></article><article class="resource-card reveal"><div class="resource-icon cyan-bg">⚡</div><h3>Automações</h3><p>Estruture processos repetitivos e crie fluxos mais inteligentes para a operação.</p></article><article class="resource-card reveal"><div class="resource-icon pink-bg">◴</div><h3>Planejamento visual</h3><p>Enxergue demandas, cronogramas e dependências com mais facilidade.</p></article></div><p class="feature-disclaimer">* Recursos apresentados como visão de produto. A disponibilidade efetiva dependerá dos módulos implementados no aplicativo.</p></div></section>
-<section class="section process" id="como-funciona"><div class="container"><div class="section-heading centered reveal"><span class="section-kicker">SIMPLES DO COMEÇO AO FIM</span><h2>Organize. Conecte. <span class="gradient-text">Conquiste.</span></h2><p>Um fluxo intuitivo para transformar planejamento em execução.</p></div><div class="steps"><div class="step reveal"><span class="step-number">01</span><div class="step-symbol">◎</div><h3>Crie seu espaço</h3><p>Defina seus projetos e organize as frentes de trabalho.</p></div><div class="step reveal"><span class="step-number">02</span><div class="step-symbol">♧</div><h3>Conecte sua equipe</h3><p>Compartilhe responsabilidades e alinhe prioridades.</p></div><div class="step reveal"><span class="step-number">03</span><div class="step-symbol">↗</div><h3>Acompanhe o progresso</h3><p>Visualize etapas, identifique bloqueios e celebre entregas.</p></div></div></div></section>
-<section class="section dark-benefits" id="sobre"><div class="container about-grid"><div class="reveal"><span class="section-kicker light">A NOSSA IDEIA</span><h2>Grandes resultados nascem de <span class="bright">equipes conectadas.</span></h2><p>A WORKSH nasce com um propósito: tornar a gestão do trabalho mais clara, colaborativa e humana. A tecnologia deve facilitar as decisões, não adicionar complexidade à rotina.</p><a class="text-link" href="#contato">Converse com a gente <span>↗</span></a></div><div class="values-grid reveal"><div><span class="value-icon">✦</span><b>Simplicidade</b><small>Menos esforço para organizar.</small></div><div><span class="value-icon">◉</span><b>Transparência</b><small>Informação acessível e clara.</small></div><div><span class="value-icon">♧</span><b>Colaboração</b><small>Pessoas no centro de tudo.</small></div><div><span class="value-icon">↗</span><b>Evolução</b><small>Melhoria contínua a cada entrega.</small></div></div></div></section>
-<section class="section cta-section" id="contato"><div class="container"><div class="cta-box reveal"><span class="section-kicker light">COMECE UM NOVO CAPÍTULO</span><h2>Uma nova forma de trabalhar<br>começa <em>agora.</em></h2><p>Explore a proposta WORKSH e prepare sua equipe para um espaço de trabalho mais inteligente.</p><div class="cta-actions"><button class="btn btn-white btn-lg" data-open-workspace>Acessar o Workspace ↗</button><a class="btn btn-outline-white btn-lg" href="mailto:contato@seudominio.com?subject=Quero%20conhecer%20a%20WORKSH" data-placeholder-email>Fale com a equipe →</a></div><small class="cta-note">O link do ambiente de trabalho pode ser configurado quando o aplicativo estiver publicado.</small></div></div></section>
+<section class="hero" id="inicio">
+<div class="glow g1">
+</div>
+<div class="glow g2">
+</div>
+<div class="container hero-grid">
+<div class="hero-copy reveal">
+<div class="eyebrow">
+<span class="pulse">
+</span>
+       UM NOVO JEITO DE TRABALHAR
+      </div>
+<h1>
+       Mais conexão.
+       <br/>
+       Menos complicação.
+       <br/>
+<span class="gradient-text">
+        Mais resultados.
+       </span>
+</h1>
+<p>Crie espaços de trabalho, explore projetos em diferentes visões e transforme processos em decisões. Conheça a proposta da WORKSH em cada interação.</p>
+<div class="hero-actions">
+<a class="btn btn-primary btn-lg" href="#plataforma">
+        Explore a plataforma
+        <span>
+         →
+        </span>
+</a>
+</div>
+<div class="hero-proof">
+<div class="proof-dots">
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+</div>
+<span>
+        Planeje com clareza. Execute com confiança.
+       </span>
+</div>
+</div>
+<div aria-label="Prévia ilustrativa da plataforma WORKSH" class="hero-visual reveal">
+<div class="floating f1">
+       ✦
+       <span>
+        Equipe conectada
+       </span>
+</div>
+<div class="floating f2">
+<b>
+        ✓
+       </b>
+<span>
+        Etapa concluída!
+       </span>
+</div>
+<div class="dashboard-window">
+<div class="window-top">
+<div class="traffic">
+<b>
+</b>
+<b>
+</b>
+<b>
+</b>
+</div>
+<span>
+         worksh / workspace
+        </span>
+<span>
+         •••
+        </span>
+</div>
+<div class="dashboard-body">
+<aside class="dash-sidebar">
+<div class="dash-brand">
+<img alt="" src="assets/logo.svg"/>
+          W
+          <span>
+           SH
+          </span>
+</div>
+<div class="dash-side-item active">
+          ◧
+          <span>
+           Visão geral
+          </span>
+</div>
+<div class="dash-side-item">
+          ▤
+          <span>
+           Projetos
+          </span>
+</div>
+<div class="dash-side-item">
+          ☑
+          <span>
+           Minhas tarefas
+          </span>
+</div>
+<div class="dash-side-item">
+          ♧
+          <span>
+           Equipes
+          </span>
+</div>
+<div class="dash-side-item">
+          ▦
+          <span>
+           Relatórios
+          </span>
+</div>
+<div class="dash-side-item">
+          ⚡
+          <span>
+           Automações
+          </span>
+</div>
+</aside>
+<div class="dash-main">
+<div class="dash-heading">
+<div>
+<small>
+            MEU WORKSPACE
+           </small>
+<h3>
+            Olá, equipe!
+            <span>
+             👋
+            </span>
+</h3>
+</div>
+<div class="dash-avatar">
+           W
+          </div>
+</div>
+<div class="dash-stats">
+<div>
+<span>
+            Projetos ativos
+           </span>
+<strong>
+            12
+           </strong>
+<small>
+            ↗ em andamento
+           </small>
+</div>
+<div>
+<span>
+            Tarefas concluídas
+           </span>
+<strong>
+            84
+           </strong>
+<small>
+            ✓ nesta semana
+           </small>
+</div>
+<div>
+<span>
+            Colaboração
+           </span>
+<strong>
+            98%
+           </strong>
+<small>
+            ↗ em alta
+           </small>
+</div>
+</div>
+<div class="board-title">
+<strong>
+           Projetos em andamento
+          </strong>
+<span>
+           ▦ Quadro
+          </span>
+</div>
+<div class="mini-board">
+<div class="mini-col">
+<label>
+            ● A fazer
+           </label>
+<div class="mini-card">
+<b>
+             Nova identidade
+            </b>
+<small>
+             Design &amp; produto
+            </small>
+<div class="tag purple">
+             Design
+            </div>
+</div>
+<div class="mini-card">
+<b>
+             Planejar campanha
+            </b>
+<small>
+             Marketing
+            </small>
+<div class="tag orange">
+             Planejamento
+            </div>
+</div>
+</div>
+<div class="mini-col">
+<label>
+            ● Em andamento
+           </label>
+<div class="mini-card">
+<b>
+             Plataforma web
+            </b>
+<small>
+             Desenvolvimento
+            </small>
+<div class="progress">
+<i style="width:72%">
+</i>
+</div>
+</div>
+<div class="mini-card">
+<b>
+             Fluxo de aprovação
+            </b>
+<small>
+             Operações
+            </small>
+<div class="progress">
+<i style="width:46%">
+</i>
+</div>
+</div>
+</div>
+<div class="mini-col">
+<label>
+            ● Concluído
+           </label>
+<div class="mini-card">
+<b>
+             Workshop de equipe
+            </b>
+<small>
+             Colaboração
+            </small>
+<span class="done">
+             ✓ Concluído
+            </span>
+</div>
+<div class="mini-card">
+<b>
+             Mapa de processos
+            </b>
+<small>
+             Estratégia
+            </small>
+<span class="done">
+             ✓ Concluído
+            </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container scroll-hint">
+<span>
+      DESCUBRA O QUE É POSSÍVEL
+     </span>
+<span>
+      ↓
+     </span>
+</div>
+</section>
+<section class="trust-strip">
+<div class="container trust-grid">
+<span>
+      UMA PLATAFORMA. INÚMERAS POSSIBILIDADES.
+     </span>
+<strong>
+      PROJETOS
+     </strong>
+<strong>
+      TAREFAS
+     </strong>
+<strong>
+      EQUIPES
+     </strong>
+<strong>
+      AUTOMAÇÕES
+     </strong>
+<strong>
+      RESULTADOS
+     </strong>
+</div>
+</section>
+<section class="section platform-v4" id="plataforma">
+<div class="container">
+<div class="v4-section-intro reveal"><span class="section-kicker">01 / A PLATAFORMA</span><h2>Seu trabalho não cabe<br/><span class="gradient-text">em uma única caixa.</span></h2><p>Uma plataforma web criada para se adaptar aos processos da sua equipe — e não o contrário. Explore abaixo como os módulos se conectam.</p></div>
+<div class="v4-bento">
+<article class="v4-tile v4-tile-workspaces reveal"><div class="v4-tile-meta"><span class="v4-kicker">ORGANIZAÇÃO</span><span>01 — WORKSPACES</span></div><h3>Um universo de<br/>Workspaces.</h3><p>Crie espaços por área, convide pessoas e determine quem pode visualizar, editar ou administrar cada ambiente.</p><div class="v4-workspace-chips"><button class="active" data-ws="produto" type="button">✦ Produto <small>8 pessoas</small></button><button data-ws="operacoes" type="button">◇ Operações <small>14 pessoas</small></button><button data-ws="marketing" type="button">✳ Marketing <small>5 pessoas</small></button></div><div aria-live="polite" class="v4-insight" id="workspaceInsight">Produto — 8 participantes · 3 quadros</div></article>
+<article class="v4-tile v4-tile-fields reveal"><div class="v4-tile-meta"><span class="v4-kicker">PERSONALIZAÇÃO</span><span>02 — CAMPOS</span></div><h3>Os campos são<br/>seus.</h3><p>Adicione status, responsáveis, datas, valores e fórmulas. Configure o quadro sem engessar a operação.</p><div class="v4-field-stack"><div><span>Status</span><b class="v4-status">Em andamento</b></div><div><span>Progresso</span><div class="v4-meter"><i></i></div></div><button id="v4AddField" type="button">+ Adicionar campo</button><div hidden="" id="v4CustomField"><span>Prioridade</span><b>Alta</b></div></div></article>
+<article class="v4-tile v4-tile-flow reveal"><div class="v4-tile-meta"><span class="v4-kicker">FLUIDEZ</span><span>03 — DRAG &amp; DROP</span></div><h3>Arraste ideias.<br/>Organize entregas.</h3><p>Mova tarefas entre etapas e experimente a organização visual.</p><div class="v4-drag-board" id="v4DragBoard"><div class="v4-drag-lane" data-lane="todo"><strong>A fazer</strong><button class="v4-draggable" draggable="true" type="button">Criar apresentação <span>↗</span></button></div><div class="v4-drag-lane" data-lane="done"><strong>Concluído</strong><span class="v4-empty">Solte aqui</span></div></div><small class="v4-demo-note">Experimento local: arraste ou toque na tarefa para movê-la.</small></article>
+<article class="v4-tile v4-tile-views reveal"><div class="v4-tile-meta"><span class="v4-kicker">VISIBILIDADE</span><span>04 — PERSPECTIVAS</span></div><h3>Um projeto.<br/>Muitas perspectivas.</h3><p>O mesmo conjunto de informações, apresentado de maneiras diferentes.</p><div aria-label="Visualização do projeto" class="v4-view-tabs" role="group"><button class="active" data-view="kanban" type="button">Kanban</button><button data-view="table" type="button">Tabela</button><button data-view="timeline" type="button">Timeline</button></div><div aria-live="polite" class="v4-stage" id="viewStage"></div></article>
+</div>
+<p class="v4-disclaimer">Demonstrações interativas e dados ilustrativos. Plataforma WORKSH em desenvolvimento.</p>
+</div></section>
+<section class="section section-soft discover-section" id="recursos"><div class="container"><div class="section-heading reveal"><span class="section-kicker">DESCUBRA AS POSSIBILIDADES</span><h2>Ferramentas que evoluem <span class="gradient-text">com a sua forma de trabalhar.</span></h2><p>Escolha um módulo e descubra o que estamos construindo para o Workspace WORKSH.</p></div><div class="module-shell reveal"><div class="module-nav"><button aria-label="Módulo anterior" class="module-arrow" id="modPrev" type="button">←</button><span id="moduleCount">01 / 06</span><button aria-label="Próximo módulo" class="module-arrow" id="modNext" type="button">→</button></div><div aria-live="polite" class="module-panel" id="modulePanel"></div><div aria-label="Navegar entre módulos" class="module-dots" id="moduleDots" role="group"></div><div class="module-control"><button type="button" id="modulePlay" aria-pressed="false">Pausar rotação</button></div></div><p class="feature-disclaimer">* Conteúdos demonstrativos. Recursos descritos fazem parte do escopo de desenvolvimento da WORKSH, não de uma versão comercial já disponível.</p></div></section>
+<section class="section v4-process" id="como-funciona"><div class="container"><div class="section-heading centered reveal"><span class="section-kicker">DA IDEIA À ENTREGA</span><h2>O trabalho evolui.<br/><span class="gradient-text">Sua equipe acompanha.</span></h2><p>Uma jornada conectada, do planejamento à decisão.</p></div><div class="v4-process-rail"><article class="v4-process-step reveal"><span class="v4-step-no">01</span><div class="v4-scene v4-scene-grid"><i></i><i></i><i></i><i></i></div><h3>Monte seu espaço</h3><p>Organize projetos, quadros e regras em um ambiente único.</p></article><article class="v4-process-step reveal"><span class="v4-step-no">02</span><div class="v4-scene v4-scene-connect"><i></i><i></i><i></i><span></span><span></span></div><h3>Conecte as pessoas</h3><p>Compartilhe responsabilidades e acompanhe atualizações.</p></article><article class="v4-process-step reveal"><span class="v4-step-no">03</span><div class="v4-scene v4-scene-bars"><i></i><i></i><i></i><i></i></div><h3>Transforme em resultado</h3><p>Visualize o avanço com relatórios e indicadores.</p></article></div></div></section>
+<section class="section v4-connect" id="conexoes"><div class="container v4-connect-grid"><div aria-hidden="true" class="v4-connect-visual reveal"><div class="v4-connect-halo"><div class="v4-connect-core"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 140 140" class="connect-brand-mark" aria-hidden="true" focusable="false"><title id="t">WORKSH, equipes conectadas</title><defs><linearGradient id="center" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#24C5FF"/><stop offset="1" stop-color="#1465F9"/></linearGradient></defs><circle class="connect-core-ball" cx="60" cy="60" r="29" fill="url(#center)"/><path class="connect-arc" d="M24 40 A44 44 0 0 1 42 20" fill="none" stroke="#188CFF" stroke-width="10" stroke-linecap="round"/><path class="connect-arc" d="M78 20 A44 44 0 0 1 96 40" fill="none" stroke="#8944FF" stroke-width="10" stroke-linecap="round"/><path class="connect-arc" d="M96 80 A44 44 0 0 1 78 100" fill="none" stroke="#17C66B" stroke-width="10" stroke-linecap="round"/><path class="connect-arc" d="M42 100 A44 44 0 0 1 24 80" fill="none" stroke="#FF9D00" stroke-width="10" stroke-linecap="round"/><circle cx="60" cy="11" r="12" class="connect-node" fill="#8F43F9"/><circle cx="109" cy="60" r="12" class="connect-node" fill="#16CA75"/><circle cx="60" cy="109" r="12" class="connect-node" fill="#FFA200"/><circle cx="11" cy="60" r="12" class="connect-node" fill="#168DFF"/></svg></div><span class="v4-connector c1">API</span><span class="v4-connector c2">OAuth</span><span class="v4-connector c3">{ }</span><span class="v4-connector c4">↔</span><span class="v4-connector c5">Git</span></div></div><div class="v4-connect-copy reveal"><span class="section-kicker light">05 / WORKSH CONNECT</span><h2>Uma plataforma<br/><span class="gradient-text">que conversa com outras.</span></h2><p>Estamos planejando integrações por APIs documentadas, OAuth e webhooks, com controle de permissões, credenciais protegidas e registros de execução.</p><div class="v4-pills"><span>REST API</span><span>Webhooks</span><span>OAuth</span><span>Google APIs</span><span>GitHub</span><span>Exportação de dados</span></div><small>Integrações sujeitas às regras, limites e disponibilidade de cada provedor.</small></div></div></section><section class="section dark-benefits" id="sobre">
+<div class="container about-grid">
+<div class="reveal">
+<span class="section-kicker light">
+       A NOSSA IDEIA
+      </span>
+<h2>
+       Grandes resultados nascem de
+       <span class="bright">
+        equipes conectadas.
+       </span>
+</h2>
+<p>
+       A WORKSH nasce com um propósito: tornar a gestão do trabalho mais clara, colaborativa e humana. A tecnologia deve facilitar as decisões, não adicionar complexidade à rotina.
+      </p>
+<a class="text-link" href="#contato">
+       Converse com a gente
+       <span>
+        ↗
+       </span>
+</a>
+</div>
+<div aria-label="Carrossel de valores da WORKSH" class="values-carousel reveal">
+<div aria-hidden="true" class="glass-orbit"></div>
+<div class="carousel-window">
+<article class="value-slide is-active" data-value-slide="">
+<span class="value-step">01</span>
+<div aria-hidden="true" class="value-symbol"></div>
+<h3>Simplicidade</h3>
+<p>Processos mais claros, menos ruído operacional e uma rotina mais leve para as equipes.</p>
+</article>
+<article class="value-slide" data-value-slide="">
+<span class="value-step">02</span>
+<div aria-hidden="true" class="value-symbol"></div>
+<h3>Transparência</h3>
+<p>Atualizações visíveis, decisões documentadas e informações acessíveis em um único ambiente.</p>
+</article>
+<article class="value-slide" data-value-slide="">
+<span class="value-step">03</span>
+<div aria-hidden="true" class="value-symbol"></div>
+<h3>Colaboração</h3>
+<p>Pessoas conectadas por contexto, responsabilidades e conversas que realmente fazem a operação avançar.</p>
+</article>
+<article class="value-slide" data-value-slide="">
+<span class="value-step">04</span>
+<div aria-hidden="true" class="value-symbol"></div>
+<h3>Evolução</h3>
+<p>Uma plataforma que acompanha o crescimento do time e transforma cada entrega em melhoria contínua.</p>
+</article>
+</div>
+<div class="value-carousel-controls">
+<button aria-label="Valor anterior" class="value-nav prev" type="button">‹</button>
+<div aria-label="Selecionar valor" class="value-dots" id="valueDots"></div>
+<button aria-label="Próximo valor" class="value-nav next" type="button">›</button>
+</div>
+</div>
+</div>
+</section>
+<section class="section cta-section" id="contato">
+<div class="container">
+<div class="cta-box reveal">
+<span class="section-kicker light">
+       COMECE UM NOVO CAPÍTULO
+      </span>
+<h2>
+       Uma nova forma de trabalhar
+       <br/>
+       começa
+       <em>
+        agora.
+       </em>
+</h2>
+<p>
+       Explore a proposta WORKSH e prepare sua equipe para um espaço de trabalho mais inteligente.
+      </p>
+<div class="cta-actions">
+<a class="btn btn-outline-white btn-lg" data-placeholder-email="" href="mailto:contato@seudominio.com?subject=Quero%20conhecer%20a%20WORKSH">
+        Fale com a equipe →
+       </a>
+</div>
+</div>
+</div>
+</section>
 </main>
-<footer class="footer"><div class="container footer-main"><div><a class="brand footer-brand" href="#inicio"><img src="assets/logo.svg" alt="" width="42" height="42"><span>WORK<span class="blue">SH</span></span></a><p>Seu trabalho. Tudo em um só lugar.</p><a class="footer-contact" href="https://wa.me/5517981364811" target="_blank" rel="noopener noreferrer" aria-label="Conversar com a WORKSH pelo WhatsApp: (17) 98136-4811 (abre em nova aba)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/><path d="M9 8c0 4 3 7 7 7l1-2-3-1-1 1-2-2 1-1-1-3z"/></svg><span>WhatsApp · (17) 98136-4811</span></a><p class="footer-company">CNPJ: 49.560.970/0001-30</p></div><div class="footer-links"><div><strong>Explore</strong><a href="#plataforma">Plataforma</a><a href="#recursos">Recursos</a><a href="#como-funciona">Como funciona</a></div><div><strong>WORKSH</strong><a href="#sobre">Nossa visão</a><a href="#contato">Contato</a><button data-open-workspace>Acessar Workspace</button></div></div></div><div class="container footer-bottom"><span>© <span id="year"></span> WORKSH. Todos os direitos reservados.</span><span>Organize. Conecte. Conquiste.</span></div></footer>
-<div class="modal-backdrop" id="workspaceModal" hidden><div class="workspace-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc" tabindex="-1"><button type="button" class="modal-close" id="closeModal" aria-label="Fechar janela">×</button><img src="assets/logo.svg" alt="" width="72" height="72"><h2 id="modalTitle">Seu espaço começa aqui.</h2><p id="modalDesc">Acesse o ambiente de trabalho da WORKSH. Estamos preparando essa integração.</p><a id="workspaceLink" class="btn btn-primary btn-lg modal-enter" href="#" hidden>Ir para o meu Workspace ↗</a><div id="workspacePending" class="workspace-pending"><span>✦</span><strong>Ambiente em preparação</strong><p>Assim que a plataforma estiver publicada, o acesso será habilitado neste botão.</p></div><span class="modal-footnote">WORKSH — Organize. Conecte. Conquiste.</span></div></div>
-</body></html>
+<footer class="footer">
+<div class="container footer-main">
+<div>
+<a class="brand footer-brand" href="#inicio">
+<img alt="" height="42" src="assets/logo.svg" width="42"/>
+<span>
+       WORK
+       <span class="blue">
+        SH
+       </span>
+</span>
+</a>
+<p>
+      Seu trabalho. Tudo em um só lugar.
+     </p>
+<a aria-label="Conversar com a WORKSH pelo WhatsApp: (17) 98136-4811 (abre em nova aba)" class="footer-contact" href="https://wa.me/5517981364811" rel="noopener noreferrer" target="_blank">
+<svg aria-hidden="true" fill="currentColor" focusable="false" viewbox="0 0 24 24">
+<path d="M20.52 3.48A11.87 11.87 0 0 0 12.05 0C5.47 0 .11 5.35.1 11.94c0 2.1.55 4.16 1.6 5.97L0 24l6.25-1.64a11.95 11.95 0 0 0 5.79 1.48h.01c6.58 0 11.94-5.35 11.95-11.94a11.86 11.86 0 0 0-3.48-8.42ZM12.05 21.82a9.91 9.91 0 0 1-5.06-1.38l-.36-.21-3.71.97.99-3.62-.24-.37a9.9 9.9 0 0 1-1.52-5.27c0-5.47 4.45-9.92 9.93-9.92a9.85 9.85 0 0 1 7.02 2.91 9.87 9.87 0 0 1 2.9 7.03c0 5.47-4.46 9.92-9.95 9.92Zm5.45-7.43c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.18-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.68-1.62-.93-2.22-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.1 4.49.71.31 1.27.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.18-1.42-.08-.13-.28-.2-.58-.35Z">
+</path>
+</svg>
+<span>
+       WhatsApp · (17) 98136-4811
+      </span>
+</a>
+<p class="footer-company">
+      CNPJ: 49.560.970/0001-30
+     </p>
+</div>
+<div class="footer-links">
+<div>
+<strong>
+       Explore
+      </strong>
+<a href="#plataforma">
+       Plataforma
+      </a>
+<a href="#recursos">
+       Recursos
+      </a>
+<a href="#como-funciona">
+       Como funciona
+      </a>
+</div>
+<div>
+<strong>
+       WORKSH
+      </strong>
+<a href="#sobre">
+       Nossa visão
+      </a>
+<a href="#contato">
+       Contato
+      </a>
+<button data-open-workspace="">
+       Acessar Workspace
+      </button>
+</div>
+</div>
+</div>
+<div class="container footer-bottom">
+<span>
+     ©
+     <span id="year">
+</span>
+     WORKSH. Todos os direitos reservados.
+    </span>
+<span>
+     Organize. Conecte. Conquiste.
+    </span>
+</div>
+</footer>
+<div class="modal-backdrop" hidden="" id="workspaceModal">
+<div aria-describedby="modalDesc" aria-labelledby="modalTitle" aria-modal="true" class="workspace-modal" role="dialog" tabindex="-1">
+<button aria-label="Fechar janela" class="modal-close" id="closeModal" type="button">
+     ×
+    </button>
+<img alt="" height="72" src="assets/logo.svg" width="72"/>
+<h2 id="modalTitle">
+     Seu espaço começa aqui.
+    </h2>
+<p id="modalDesc">
+     Acesse o ambiente de trabalho da WORKSH. Estamos preparando essa integração.
+    </p>
+<a class="btn btn-primary btn-lg modal-enter" hidden="" href="#" id="workspaceLink">
+     Ir para o meu Workspace ↗
+    </a>
+<div class="workspace-pending" id="workspacePending">
+<span>
+      ✦
+     </span>
+<strong>
+      Ambiente em preparação
+     </strong>
+<p>
+      Assim que a plataforma estiver publicada, o acesso será habilitado neste botão.
+     </p>
+</div>
+</div>
+</div>
+</body>
+</html>
