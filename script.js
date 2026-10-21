@@ -8,8 +8,10 @@ const CONTACT_EMAIL = '';
 
 const modal = document.getElementById('workspaceModal');
 const closeButton = document.getElementById('closeModal');
-const workspaceLink = document.getElementById('workspaceLink');
-const pending = document.getElementById('workspacePending');
+const loginForm = document.getElementById('workspaceLogin');
+const loginPassword = document.getElementById('loginPassword');
+const loginStatus = document.getElementById('loginStatus');
+const togglePassword = document.getElementById('togglePassword');
 const menuButton = document.getElementById('menuToggle');
 const mobileNav = document.getElementById('mobileNav');
 let previousFocus = null;
@@ -23,16 +25,18 @@ function configuredWorkspaceUrl() {
 }
 function openWorkspace() {
   previousFocus = document.activeElement;
-  const url = configuredWorkspaceUrl();
-  workspaceLink.hidden = !url;
-  pending.hidden = !!url;
-  if (url) workspaceLink.href = url;
+  loginStatus.hidden = true;
   modal.hidden = false;
   document.body.classList.add('modal-open');
-  closeButton.focus();
+  document.getElementById('loginEmail').focus();
 }
 function closeWorkspace() {
   modal.hidden = true;
+  loginForm.reset();
+  loginPassword.type = 'password';
+  togglePassword.textContent = 'Mostrar';
+  togglePassword.setAttribute('aria-label', 'Mostrar senha');
+  togglePassword.setAttribute('aria-pressed', 'false');
   document.body.classList.remove('modal-open');
   previousFocus?.focus();
 }
@@ -43,7 +47,7 @@ document.addEventListener('keydown', event => {
   if (modal.hidden) return;
   if (event.key === 'Escape') closeWorkspace();
   if (event.key === 'Tab') {
-    const focusable = [...modal.querySelectorAll('button:not([disabled]), a:not([hidden])')].filter(el => !el.hidden);
+    const focusable = [...modal.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href]')].filter(el => !el.hidden && el.getClientRects().length);
     const first = focusable[0], last = focusable[focusable.length - 1];
     if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
@@ -251,3 +255,17 @@ syncPreviewMotion();
  task?.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain','task');e.dataTransfer.effectAllowed='move';});
  board?.querySelectorAll('[data-lane]').forEach(lane=>{lane.addEventListener('dragover',e=>{e.preventDefault();lane.classList.add('drop-target')});lane.addEventListener('dragleave',()=>lane.classList.remove('drop-target'));lane.addEventListener('drop',e=>{e.preventDefault();lane.classList.remove('drop-target');moveTask(lane.dataset.lane)})});
 })();
+
+// Interface ready for authentication integration; no credentials are sent or stored.
+togglePassword.addEventListener('click', () => {
+ const visible = loginPassword.type === 'password';
+ loginPassword.type = visible ? 'text' : 'password';
+ togglePassword.textContent = visible ? 'Ocultar' : 'Mostrar';
+ togglePassword.setAttribute('aria-label', visible ? 'Ocultar senha' : 'Mostrar senha');
+ togglePassword.setAttribute('aria-pressed', String(visible));
+});
+loginForm.addEventListener('submit', event => {
+ event.preventDefault();
+ loginForm.reset();
+ window.location.assign('workspace.html');
+});

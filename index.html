@@ -567,26 +567,16 @@
      ×
     </button>
 <img alt="" height="72" src="assets/logo.svg" width="72"/>
-<h2 id="modalTitle">
-     Seu espaço começa aqui.
-    </h2>
-<p id="modalDesc">
-     Acesse o ambiente de trabalho da WORKSH. Estamos preparando essa integração.
-    </p>
-<a class="btn btn-primary btn-lg modal-enter" hidden="" href="#" id="workspaceLink">
-     Ir para o meu Workspace ↗
-    </a>
-<div class="workspace-pending" id="workspacePending">
-<span>
-      ✦
-     </span>
-<strong>
-      Ambiente em preparação
-     </strong>
-<p>
-      Assim que a plataforma estiver publicada, o acesso será habilitado neste botão.
-     </p>
-</div>
+<h2 id="modalTitle">Entre no seu Workspace</h2>
+<p id="modalDesc">Seu trabalho, sua equipe e suas ideias em um só lugar.</p>
+<form class="login-form" id="workspaceLogin" novalidate onsubmit="return false">
+<label for="loginEmail">E-mail</label>
+<input id="loginEmail" type="email" autocomplete="username" placeholder="voce@empresa.com" required />
+<label for="loginPassword">Senha</label>
+<div class="login-password"><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Digite sua senha" required /><button type="button" id="togglePassword" aria-controls="loginPassword" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
+<button type="submit" class="btn btn-primary btn-lg login-submit">Entrar no Workspace <span aria-hidden="true">→</span></button>
+<p id="loginStatus" class="login-status" role="status" hidden></p>
+</form>
 </div>
 </div>
 </body>

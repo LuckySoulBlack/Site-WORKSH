@@ -14,3 +14,10 @@ Na pasta destes arquivos: `python -m http.server 8765`. Acesse `http://127.0.0.1
 As demonstrações são ilustrativas. O acesso real ao Workspace depende de configurar `WORKSPACE_URL` em `script.js` e da aplicação futura.
 
 **Atenção**: se estiver substituindo versão antiga, exclua `v4.css` e `v4.js` obsoletos para evitar confusão. Nenhuma alteração foi enviada ao GitHub.
+
+## Workspace local
+- `workspace.html`, `workspace.css` e `workspace.js`: aplicação local com ambientes, quadros, grupos, tarefas, pessoas, Kanban, calendário, indicadores e histórico.
+- Os dados ficam no navegador, na chave `worksh.workspace.v1`. Acesso direto pelo pop-up; autenticação ainda não integrada.
+- Faça backup JSON nas configurações antes de limpar os dados do navegador ou mudar de endereço. CSV exporta as tarefas filtradas do quadro.
+- Cadastros de pessoas e funções são informativos: não enviam convites nem aplicam permissões. Integração com Supabase e colaboração entre usuários ainda não implementadas.
+- O adaptador `repository` concentra leitura e gravação para futura integração. Nenhuma credencial de acesso é armazenada por esse protótipo.
