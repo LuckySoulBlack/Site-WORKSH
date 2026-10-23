@@ -41,3 +41,5 @@ e [estado da entrega](docs/entrega.md). O histórico remoto das migrations está
 
 Para voltar ao protótipo local, usar `enabled: false` em `config.js`.
 A publicação do site continua dependendo da revisão e do envio ao GitHub.
+
+Gestão de contas da equipe: [perfis e acessos](docs/perfis-e-acessos.md).

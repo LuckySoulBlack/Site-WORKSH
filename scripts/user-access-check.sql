@@ -1,0 +1,25 @@
+begin;
+-- All changes to real accounts below are rolled back, including flags and audit.
+select set_config('test.admin',(select id::text from auth.users where email='lucas@worksh.com.br'),true);
+select set_config('test.member',(select id::text from auth.users where email='adriana.sousa@shopee.com'),true);
+update private.account_security set must_change_password=false where user_id in(current_setting('test.admin')::uuid,current_setting('test.member')::uuid);
+update public.workspace_members set must_change_password=false where user_id in(current_setting('test.admin')::uuid,current_setting('test.member')::uuid);
+select set_config('request.jwt.claim.sub',current_setting('test.member'),true);
+do $$ begin if not private.ready() then raise exception 'Member not ready'; end if;
+ begin perform private.manage_users(auth.uid(),'list'); raise exception 'Member managed users'; exception when insufficient_privilege then null; end;
+end $$;
+select private.manage_users(current_setting('test.admin')::uuid,'block',current_setting('test.member')::uuid);
+set local role authenticated;
+do $$ begin if (public.account_status()->>'is_blocked')::boolean is not true then raise exception 'Blocked flag missing'; end if;
+ if exists(select 1 from public.boards) or exists(select 1 from public.profiles) then raise exception 'Blocked account retained rows'; end if;
+ if has_function_privilege('authenticated','public.backend_manage_users(uuid,text,uuid)','execute') then raise exception 'Privileged API exposed'; end if;
+end $$;
+reset role;
+select private.manage_users(current_setting('test.admin')::uuid,'release',current_setting('test.member')::uuid);
+set local role authenticated;
+do $$ begin if not private.ready() or not exists(select 1 from public.boards where name='Equipe WORKSH') then raise exception 'Release did not restore access'; end if;
+ begin update private.account_security set is_admin=true where user_id=auth.uid(); raise exception 'Self promotion allowed'; exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+do $$ begin begin perform private.manage_users(current_setting('test.admin')::uuid,'block',current_setting('test.admin')::uuid); raise exception 'Self block allowed'; exception when raise_exception then if sqlerrm='Self block allowed' then raise; end if; end; end $$;
+rollback;

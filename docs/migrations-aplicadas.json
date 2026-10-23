@@ -46,5 +46,13 @@
   {
     "version": "20261023164523",
     "name": "worksh_temp_storage_cleanup"
+  },
+  {
+    "version": "20261023181047",
+    "name": "user_administration"
+  },
+  {
+    "version": "20261023181400",
+    "name": "team_access_controls"
   }
 ]

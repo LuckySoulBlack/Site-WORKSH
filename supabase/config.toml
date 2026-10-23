@@ -21,3 +21,6 @@ verify_jwt = true
 # These are platform limits, not configurable per-function TOML settings.
 # External requests time out at 40 s; worker stops taking jobs after 100 s.
 
+
+[functions.admin-users]
+verify_jwt = false

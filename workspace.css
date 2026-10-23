@@ -27,3 +27,5 @@ html[data-saving="true"] main input, html[data-saving="true"] aside button { poi
 .account-card form { display: grid; gap: 1rem; max-width: 32rem; }
 .account-card label { display: grid; gap: .5rem; }
 .activity-item pre { max-width: 100%; overflow: auto; white-space: pre-wrap; word-break: break-word; }
+
+.user-admin-table{overflow-x:auto;margin:20px 0}.user-admin-table table{width:100%;border-collapse:collapse;text-align:left}.user-admin-table td,.user-admin-table th{padding:12px 8px;border-bottom:1px solid var(--border,#dce3ef)}.user-admin-table small{display:block;font-size:11px;opacity:.7;margin-top:5px}.user-state{display:inline-block;padding:4px 9px;border-radius:20px;font-size:12px}.user-state.active{background:#dcfce7;color:#166534}.user-state.blocked{background:#fee2e2;color:#991b1b}dialog:has(.user-admin-table){width:min(860px,95vw)}

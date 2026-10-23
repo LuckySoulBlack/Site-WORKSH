@@ -13,10 +13,10 @@
    WORKSH | Organize. Conecte. Conquiste.
   </title>
 <link href="assets/logo.svg" rel="icon" type="image/svg+xml"/>
-<link href="style.css" rel="stylesheet"/>
+<link href="style.css?v=20261023.3" rel="stylesheet"/>
 <script defer="" src="script.js">
 </script>
-<script src="config.js"></script><script defer src="assets/vendor/supabase-2.118.0.js"></script><script type="module" src="assets/js/app.js?v=20261023.2"></script></head>
+<script src="config.js"></script><script defer src="assets/vendor/supabase-2.118.0.js"></script><script type="module" src="assets/js/app.js?v=20261023.3"></script></head>
 <body>
 <a class="skip" href="#conteudo">
    Pular para o conteúdo
@@ -569,11 +569,12 @@
 <img alt="" height="72" src="assets/logo.svg" width="72"/>
 <h2 id="modalTitle">Entre no seu Workspace</h2>
 <p id="modalDesc">Seu trabalho, sua equipe e suas ideias em um só lugar.</p>
-<form class="login-form" id="workspaceLogin" novalidate onsubmit="return false">
+<form class="login-form" id="workspaceLogin" method="post" autocomplete="on">
 <label for="loginEmail">E-mail</label>
-<input id="loginEmail" type="email" autocomplete="username" placeholder="voce@empresa.com" required />
+<input id="loginEmail" name="username" type="email" autocomplete="username" placeholder="voce@empresa.com" required />
 <label for="loginPassword">Senha</label>
-<div class="login-password"><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Digite sua senha" required /><button type="button" id="togglePassword" aria-controls="loginPassword" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
+<div class="login-password"><input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required /><button type="button" id="togglePassword" aria-controls="loginPassword" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
+<label class="remember-login"><input type="checkbox" id="saveChromeLogin" name="saveChromeLogin"> Salvar usuário e senha no Chrome</label><p class="login-save-help">O navegador poderá oferecer para salvar seus dados no Gerenciador de senhas.</p>
 <button type="submit" class="btn btn-primary btn-lg login-submit">Entrar no Workspace <span aria-hidden="true">→</span></button>
 <p id="loginStatus" class="login-status" role="status" hidden></p>
 </form>
