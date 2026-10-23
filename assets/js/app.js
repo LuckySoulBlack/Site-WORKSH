@@ -4,7 +4,7 @@ import {client,unwrap,invoke,call} from './supabase-client.js';
 import {login,logout,session,signup} from './auth.js';
 import {changePassword} from './change-password.js';
 import {RemoteRepository} from './remote-repository.js';
-import {history} from './historico.js';
+import {history,renderHistory} from './historico.js?v=20261023.7';
 import {invite,accept,revoke,grant} from './convidar.js';
 import {upload,watchJob,download,mimes} from './upload.js';
 import {canDelete,canEdit} from './permissions.js';
@@ -49,7 +49,7 @@ async function begin(){
 }
 function historyReplace(){window.history.replaceState(null,'',location.pathname+location.search);}
 function showInvite(repo){const {board,workspace}=ui.current();if(!board||!canDelete(repo.role(workspace))){status('Abra um painel do qual você é proprietário para convidar.');return;}editor('Convidar para '+board.name,'<label>E-mail<input type="email" name="email" required></label>',async f=>{await invite(board.id,f.get('email'));status('Convite enfileirado para envio.');},'Convidar');}
-async function showHistory(repo){const board=ui.current().board;if(!board){status('Abra um painel para consultar o histórico.');return;}let cursor=null;const render=async()=>{const rows=await history(board.id,cursor);ui.editor('Histórico — '+board.name,rows.map(r=>`<article class="activity-item"><strong>${esc(r.action)} · ${esc(r.table_name)}</strong><small>${esc(new Date(r.created_at).toLocaleString('pt-BR'))} · ${esc(r.actor_id||'Sistema')}</small><details><summary>Ver alterações</summary><pre>${esc(JSON.stringify({antes:r.old_data,depois:r.new_data},null,2))}</pre></details></article>`).join('')||'<p>Nenhuma alteração visível.</p>',()=>{if(rows.length===50){cursor=rows.at(-1);attempt(render);}else ui.close();},rows.length===50?'Próxima página':'Fechar');};await attempt(render);}
+async function showHistory(repo){const board=ui.current().board;if(!board){status('Abra um painel para consultar o histórico.');return;}let cursor=null;const render=async()=>{const rows=await history(board.id,cursor);ui.editor('Histórico — '+board.name,renderHistory(rows,{userId:repo.identity.id,profile:ui.snapshot().profile,people:ui.current().workspace?.people||[]}),()=>{if(rows.length===50){cursor=rows.at(-1);attempt(render);}else ui.close();},rows.length===50?'Próxima página':'Fechar');};await attempt(render);}
 function decorate(repo){
  const {workspace,board}=ui.current();document.querySelectorAll('[data-action="new-workspace"]').forEach(b=>b.hidden=window.WorkshAccountRole==='guest');if(!workspace)return;
  if(window.WorkshAccountRole==='guest')document.querySelectorAll('[data-action="page"][data-id="people"],[data-action="page"][data-id="reports"]').forEach(b=>b.hidden=true);

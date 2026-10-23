@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {renderHistory} from '../assets/js/history-view.js';
+const row={actor_id:'actor',actor_name:'Lucas <Teste>',action:'UPDATE',table_name:'tasks',created_at:'2026-10-23T18:53:16Z',old_data:{title:'Entrega',status:'todo'},new_data:{title:'Entrega',status:'done'}};
+let html=renderHistory([row]);
+assert.ok(html.includes('Lucas &lt;Teste&gt;'));
+assert.ok(html.includes('Atualizou a tarefa'));
+assert.ok(html.includes('A fazer')&&html.includes('Concluído'));
+assert.ok(!html.includes('Lucas <Teste>'));
+assert.ok(renderHistory([{...row,actor_id:null}]).includes('Lucas &lt;Teste&gt;'));
+assert.ok(renderHistory([{...row,actor_name:null}],{people:[{id:'actor',name:'Adriana'}]}).includes('Adriana'));
+assert.ok(renderHistory([{...row,actor_name:null,actor_id:null}]).includes('Sistema'));
+assert.ok(renderHistory([{...row,actor_name:null}]).includes('Participante não identificado'));
+assert.ok(renderHistory([{...row,actor_name:null}],{userId:'actor',profile:{name:'Meu nome'}}).includes('Meu nome'));
+console.log('PASS: named authors, retained snapshots, fallback identities, readable changes and HTML escaping.');
