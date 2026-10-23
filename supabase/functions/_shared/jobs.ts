@@ -1,3 +1,4 @@
+import {ensureFolder,newDriveId} from './drive.ts';
 import {DB,env,external,googleToken,HttpError,random,requireEnv,rpc} from './core.ts';
 export async function emailJob(db:DB,id:string) {
  requireEnv('RESEND_API_KEY','RESEND_FROM_EMAIL','APP_URL');
@@ -17,8 +18,7 @@ export async function emailJob(db:DB,id:string) {
  await external('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${env('RESEND_API_KEY')}`,'Content-Type':'application/json','Idempotency-Key':`worksh-invite-${id}`},body:JSON.stringify({from:env('RESEND_FROM_EMAIL'),to:[i.email],subject:'Seu convite para a WORKSH',text})});
  await rpc(db,'backend_finish_invite',{invitation:id,lease:i.lease_token,invitee:userId});
 }
-async function workspaceRow(db:DB,id:string){const {data,error}=await db.from('workspaces').select('id,owner_id,drive_folder_id,drive_secret_id').eq('id',id).single();if(error||!data)throw new Error('Workspace unavailable');return data;}
-async function newDriveId(token:string) {const r=await external('https://www.googleapis.com/drive/v3/files/generateIds?count=1&space=drive&type=files',{headers:{Authorization:`Bearer ${token}`}});return (await r.json()).ids[0] as string;}
+async function workspaceRow(db:DB,id:string){const {data,error}=await db.from('workspaces').select('id,name,owner_id,drive_folder_id,drive_secret_id').eq('id',id).single();if(error||!data)throw new Error('Workspace unavailable');return data;}
 async function driveExists(token:string,id:string){const r=await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}?fields=id,trashed`,{headers:{Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(20000)});if(r.status===404){await r.body?.cancel();return false;}if(!r.ok){await r.body?.cancel();throw new Error('Drive unavailable');}const f=await r.json();if(f.trashed)throw new Error('Drive file was removed');return true;}
 export async function folderJob(db:DB,p:Record<string,string>){
  if(p.type==='cleanup_storage'){
@@ -38,9 +38,8 @@ export async function folderJob(db:DB,p:Record<string,string>){
  if(!await rpc(db,'backend_access',{actor:p.actor_id,workspace:p.workspace_id,board:null,owner_only:true}))return;
  let w=await workspaceRow(db,p.workspace_id);const token=await googleToken(db,w);
  if(!w.drive_folder_id){const id=await newDriveId(token);const {error}=await db.from('workspaces').update({drive_folder_id:id}).eq('id',w.id).is('drive_folder_id',null);if(error)throw error;w=await workspaceRow(db,w.id);}
- if(await driveExists(token,w.drive_folder_id))return;
- const r=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({id:w.drive_folder_id,name:'WORKSH — '+w.id,mimeType:'application/vnd.google-apps.folder'}),signal:AbortSignal.timeout(30000)});
- if(!r.ok && !await driveExists(token,w.drive_folder_id)){await r.body?.cancel();throw new Error('Folder creation failed');}await r.body?.cancel();
+ const connection=await rpc(db,'backend_owner_drive',{actor:w.owner_id,operation:'get'});
+ await ensureFolder(token,w.drive_folder_id,w.name||'Workspace',connection.root_folder_id);
 }
 export async function uploadJob(db:DB,id:string,messageId?:number){
  requireEnv('GOOGLE_CLIENT_ID','GOOGLE_CLIENT_SECRET');
@@ -49,13 +48,15 @@ export async function uploadJob(db:DB,id:string,messageId?:number){
  const timer=messageId===undefined?null:setInterval(()=>{rpc(db,'backend_renew',{queue:'drive_uploads',message_id:messageId,job:id,lease:j.lease_token}).then(ok=>{if(!ok)leaseLost=true;}).catch(()=>{leaseLost=true;});},20000);
  try{
  const w=await workspaceRow(db,j.workspace_id);if(!w.drive_folder_id)throw new Error('Drive folder pending');const token=await googleToken(db,w);
+ let destination=await rpc(db,'backend_owner_drive',{actor:w.owner_id,operation:'board_folder',payload:{board_id:j.board_id}});if(!destination.folder_id){const proposed=await newDriveId(token);destination=await rpc(db,'backend_owner_drive',{actor:w.owner_id,operation:'board_folder',payload:{board_id:j.board_id,folder_id:proposed}});}
+ const {data:board}=await db.from('boards').select('name').eq('id',j.board_id).single();await ensureFolder(token,destination.folder_id,board?.name||'Painel',w.drive_folder_id);
  let driveId=j.drive_file_id;
  if(!driveId){driveId=await newDriveId(token);const {error}=await db.from('upload_jobs').update({drive_file_id:driveId}).eq('id',id).eq('lease_token',j.lease_token);if(error)throw error;}
  if(!await driveExists(token,driveId)){
  const storageURL=env('SUPABASE_URL')+'/storage/v1/object/authenticated/uploads-temp/'+j.storage_path.split('/').map(encodeURIComponent).join('/');
  const source=await external(storageURL,{headers:{Authorization:`Bearer ${env('SUPABASE_SERVICE_ROLE_KEY')}`,apikey:env('SUPABASE_SERVICE_ROLE_KEY')}});
  if(Number(source.headers.get('content-length'))!==Number(j.size_bytes)){await source.body?.cancel();throw new Error('Invalid stored size');}
- const init=await external('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json','X-Upload-Content-Type':j.mime,'X-Upload-Content-Length':String(j.size_bytes)},body:JSON.stringify({id:driveId,name:j.file_name,parents:[w.drive_folder_id]})});
+ const init=await external('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json','X-Upload-Content-Type':j.mime,'X-Upload-Content-Length':String(j.size_bytes)},body:JSON.stringify({id:driveId,name:j.file_name,parents:[destination.folder_id]})});
  const target=init.headers.get('Location');await init.body?.cancel();if(!target||new URL(target).hostname!=='www.googleapis.com'){await source.body?.cancel();throw new Error('Invalid upload session');}
  const uploaded=await external(target,{method:'PUT',headers:{'Content-Type':j.mime,'Content-Length':String(j.size_bytes)},body:source.body});await uploaded.body?.cancel();
  }

@@ -13,6 +13,7 @@ do $$ begin
 end $$;
 reset role;
 select private.manage_users(current_setting('test.admin')::uuid,'role_user',current_setting('test.guest')::uuid);
+insert into private.drive_connections(user_id,google_subject,email,refresh_secret_id,root_folder_id,status) values(current_setting('test.guest')::uuid,'qa-'||current_setting('test.guest'),'qa@example.invalid',public.backend_store_secret('disposable-qa-token'),'qa-root-'||current_setting('test.guest'),'connected');
 set local role authenticated;
 select set_config('test.ws',public.create_workspace('Profile QA workspace')::text,true);
 reset role;

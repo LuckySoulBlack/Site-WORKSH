@@ -4,7 +4,7 @@ export async function upload(file,board_id,task_id=null){
  if(file.size<1||file.size>5242880||!mimes.includes(file.type))throw Error('Use arquivo de até 5 MB em formato permitido.');
  const b=await unwrap(client().from('boards').select('workspace_id').eq('id',board_id).single());
  const w=await unwrap(client().from('workspaces').select('drive_folder_id').eq('id',b.workspace_id).single());
- if(!w.drive_folder_id)throw Error('O proprietário precisa conectar o Google Drive antes do primeiro upload.');
+ if(!w.drive_folder_id)throw Error('O proprietário precisa concluir a conexão do Drive e a preparação da pasta deste ambiente antes do primeiro upload.');
  const me=await user();const path=`${me.id}/${board_id}/${crypto.randomUUID()}`;
  await unwrap(client().storage.from('uploads-temp').upload(path,file,{contentType:file.type,upsert:false}));
  return call('enfileirar_upload',{storage_path:path,file_name:file.name,mime:file.type,size_bytes:file.size,board_id,task_id});

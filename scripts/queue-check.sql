@@ -3,6 +3,7 @@ begin;
 select set_config('test.queue_user',gen_random_uuid()::text,true);
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values(current_setting('test.queue_user')::uuid,'worksh-queue-'||current_setting('test.queue_user')||'@example.invalid',now(),'{}');
 update private.account_security set must_change_password=false,account_type='user' where user_id=current_setting('test.queue_user')::uuid;
+insert into private.drive_connections(user_id,google_subject,email,refresh_secret_id,root_folder_id,status) values(current_setting('test.queue_user')::uuid,'qa-'||current_setting('test.queue_user'),'qa@example.invalid',public.backend_store_secret('disposable-qa-token'),'qa-root-'||current_setting('test.queue_user'),'connected');
 select set_config('request.jwt.claim.sub',current_setting('test.queue_user'),true);
 set local role authenticated;
 select set_config('test.queue_workspace',public.create_workspace('QA queue workspace')::text,true);

@@ -45,3 +45,5 @@ A publicação do site continua dependendo da revisão e do envio ao GitHub.
 Gestão de contas da equipe: [perfis e acessos](docs/perfis-e-acessos.md).
 
 Configurações administrativas: [perfis, convites, exclusões e Drive](docs/configuracoes-de-perfis.md).
+
+Google Drive por conta no cadastro (ativação pendente): [estado e implantação](docs/drive-no-cadastro.md).

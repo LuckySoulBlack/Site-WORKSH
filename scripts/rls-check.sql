@@ -9,6 +9,7 @@ select current_setting('test.'||x)::uuid,'worksh-qa-'||current_setting('test.'||
 from unnest(array['owner','member','other','pending']) x;
 update private.account_security set must_change_password=false where user_id in(current_setting('test.owner')::uuid,current_setting('test.member')::uuid,current_setting('test.other')::uuid);
 update private.account_security set account_type='user' where user_id=current_setting('test.owner')::uuid;
+insert into private.drive_connections(user_id,google_subject,email,refresh_secret_id,root_folder_id,status) values(current_setting('test.owner')::uuid,'qa-'||current_setting('test.owner'),'qa@example.invalid',public.backend_store_secret('disposable-qa-token'),'qa-root-'||current_setting('test.owner'),'connected');
 select set_config('request.jwt.claim.sub',current_setting('test.owner'),true);
 set local role authenticated;
 select set_config('test.workspace',public.create_workspace('QA isolated workspace')::text,true);

@@ -51,8 +51,11 @@ export async function external(url:string,options:RequestInit={}) {
 }
 export async function googleToken(db:DB,workspace:Record<string,unknown>) {
  requireEnv('GOOGLE_CLIENT_ID','GOOGLE_CLIENT_SECRET');
- const secret=await rpc(db,'backend_secret',{secret_id:workspace.drive_secret_id});
- if(!secret)throw new HttpError(409,'O proprietário precisa conectar o Google Drive.');
- const response=await external('https://oauth2.googleapis.com/token',{method:'POST',body:new URLSearchParams({client_id:env('GOOGLE_CLIENT_ID'),client_secret:env('GOOGLE_CLIENT_SECRET'),refresh_token:secret,grant_type:'refresh_token'})});
+ if(!workspace.owner_id)throw new HttpError(409,'Proprietário do arquivo indisponível.');
+ const connection=await rpc(db,'backend_owner_drive',{actor:workspace.owner_id,operation:'get'});
+ if(!connection||connection.status!=='connected')throw new HttpError(409,'O proprietário precisa reconectar o Google Drive.');
+ const secret=await rpc(db,'backend_secret',{secret_id:connection.refresh_secret_id});
+ const response=await fetch('https://oauth2.googleapis.com/token',{method:'POST',body:new URLSearchParams({client_id:env('GOOGLE_CLIENT_ID'),client_secret:env('GOOGLE_CLIENT_SECRET'),refresh_token:secret,grant_type:'refresh_token'}),signal:AbortSignal.timeout(20000)});
+ if(!response.ok){const result=await response.json().catch(()=>({}));if(result.error==='invalid_grant'){await rpc(db,'backend_owner_drive',{actor:workspace.owner_id,operation:'invalidate'});throw new HttpError(409,'O proprietário precisa reconectar o Google Drive.');}throw new HttpError(503,'Google Drive temporariamente indisponível.');}
  return (await response.json()).access_token as string;
 }
