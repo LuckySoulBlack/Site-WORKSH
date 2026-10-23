@@ -9,6 +9,8 @@ insert into public.tasks(id,board_id,title,created_by) values('aaaaaaaa-0000-400
 insert into public.workspaces(id,name,owner_id) values('bbbbbbbb-0000-4000-8000-000000000005','Other company','aaaaaaaa-0000-4000-8000-000000000004');
 insert into public.boards(id,workspace_id,name,created_by) values('bbbbbbbb-0000-4000-8000-000000000006','bbbbbbbb-0000-4000-8000-000000000005','Private board','aaaaaaaa-0000-4000-8000-000000000004');
 insert into public.tasks(board_id,title,created_by) values('bbbbbbbb-0000-4000-8000-000000000006','PRIVATE OTHER COMPANY TASK','aaaaaaaa-0000-4000-8000-000000000004');
+insert into public.groups(id,board_id,name) values('aaaaaaaa-0000-4000-8000-000000000008','aaaaaaaa-0000-4000-8000-000000000006','Etapa de teste');
+update public.tasks set group_id='aaaaaaaa-0000-4000-8000-000000000008' where id='aaaaaaaa-0000-4000-8000-000000000007';
 update public.tasks set description='PRIVATE INTERNAL CONTENT',custom_values='{"private":"NEVER SHARE"}',assignee_id='aaaaaaaa-0000-4000-8000-000000000002' where id='aaaaaaaa-0000-4000-8000-000000000007';
 update public.profiles set full_name='Editor Teste' where id='aaaaaaaa-0000-4000-8000-000000000002';
 set local role authenticated;
@@ -24,6 +26,7 @@ select set_config('request.jwt.claim.sub','',true);
 do $$declare r jsonb;begin
  r=public.read_shared_project(current_setting('test.share')::jsonb->>'token');
  if r->'tasks'->0?'assignee' or r->'tasks'->0?'description' or r->'tasks'->0?'custom_values' then raise exception 'Internal information leaked';end if;
+ if r->'tasks'->0->>'group'<>'Etapa de teste' then raise exception 'Task group context missing';end if;
  if jsonb_array_length(r->'tasks')<>1 then raise exception 'Incorrect task scope';end if;
  begin perform public.read_shared_project(repeat('0',64));raise exception 'Invalid token accepted';exception when insufficient_privilege then null;end;
  if has_table_privilege('anon','public.tasks','SELECT') then raise exception 'Anonymous table access expanded';end if;
