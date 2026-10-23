@@ -2,7 +2,7 @@
 begin;
 select set_config('test.queue_user',gen_random_uuid()::text,true);
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values(current_setting('test.queue_user')::uuid,'worksh-queue-'||current_setting('test.queue_user')||'@example.invalid',now(),'{}');
-update private.account_security set must_change_password=false where user_id=current_setting('test.queue_user')::uuid;
+update private.account_security set must_change_password=false,account_type='user' where user_id=current_setting('test.queue_user')::uuid;
 select set_config('request.jwt.claim.sub',current_setting('test.queue_user'),true);
 set local role authenticated;
 select set_config('test.queue_workspace',public.create_workspace('QA queue workspace')::text,true);

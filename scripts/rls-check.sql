@@ -8,6 +8,7 @@ insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data)
 select current_setting('test.'||x)::uuid,'worksh-qa-'||current_setting('test.'||x)||'@example.invalid',now(),'{}'::jsonb
 from unnest(array['owner','member','other','pending']) x;
 update private.account_security set must_change_password=false where user_id in(current_setting('test.owner')::uuid,current_setting('test.member')::uuid,current_setting('test.other')::uuid);
+update private.account_security set account_type='user' where user_id=current_setting('test.owner')::uuid;
 select set_config('request.jwt.claim.sub',current_setting('test.owner'),true);
 set local role authenticated;
 select set_config('test.workspace',public.create_workspace('QA isolated workspace')::text,true);

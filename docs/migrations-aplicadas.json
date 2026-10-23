@@ -54,5 +54,9 @@
   {
     "version": "20261023181400",
     "name": "team_access_controls"
+  },
+  {
+    "version": "20261023190848",
+    "name": "platform_profiles_settings"
   }
 ]
