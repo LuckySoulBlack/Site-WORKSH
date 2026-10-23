@@ -1,7 +1,9 @@
+import {signedCompanyLogos} from './company-assets.js?v=20261023.10';
 import {signedAvatars} from './profile-photos.js';
 import {client,unwrap,call} from './supabase-client.js';
 import {workspaceColumns,page,taskColumns} from './boards.js';
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const companyRecord=c=>Object.fromEntries(Object.entries(c||{}).filter(([key])=>key!=='logo_url'));
 const tableRows=d=>{
  const out={boards:[],groups:[],tasks:[],comments:[]};
  for(const w of d.workspaces)for(const b of w.boards){out.boards.push({id:b.id,workspace_id:w.id,name:b.name,description:b.description||'',created_by:b.created_by||d.user_id,_version:b.updated_at||null});
@@ -17,7 +19,7 @@ export class RemoteRepository {
  const [workspaces,boards,profiles]=await Promise.all([
  page('workspaces',workspaceColumns,{},null,100),page('boards','id,workspace_id,name,description,created_by,created_at,updated_at',{},null,100),
  unwrap(client().from('profiles').select(window.WorkshBoardFeatures?'id,full_name,phone,job,theme,avatar_path':'id,full_name,phone,job,theme').eq('id',this.identity.id).single())]);
- await signedAvatars([profiles]);
+ await signedAvatars([profiles]);await signedCompanyLogos(workspaces);
  const data={version:1,user_id:this.identity.id,profile:{avatar_path:profiles.avatar_path,avatar_url:profiles.avatar_url,name:profiles.full_name,email:this.identity.email,phone:profiles.phone,job:profiles.job,theme:profiles.theme},company:{},connections:{},workspaces:workspaces.map(w=>({...w,modules:w.modules||[],people:[],activity:[],boards:boards.filter(b=>b.workspace_id===w.id).map(b=>({...b,groups:[],tasks:[]}))}))};
  this.loaded.clear();this.cursors.clear();if(data.workspaces[0])data.workspaces[0]._counts=await call('workspace_counts',{w:data.workspaces[0].id});this.baseline=structuredClone(data);this.ui.load(data);return data;
  }
@@ -48,9 +50,9 @@ export class RemoteRepository {
  for(const w of next.workspaces){
  const old=before.workspaces.find(x=>x.id===w.id);
  if(!old){changes.push({table:'workspaces',op:'workspace_create',id:w.id,values:{name:w.name}});w.owner_id=this.identity.id;}
- const values={name:w.name,description:w.description||'',modules:w.modules,company:w.id===this.ui.current().workspace?.id?next.company:(w.company||{})};
- const previous=old?{name:old.name,description:old.description||'',modules:old.modules,company:old.company||{}}:null;
- if(this.role(w)==='owner'&&!same(values,previous)){changes.push({table:'workspaces',op:'update',id:w.id,version:old?.updated_at||null,values});w.company=values.company;}}
+ const values={name:w.name,description:w.description||'',modules:w.modules,company:companyRecord(w.id===this.ui.current().workspace?.id?next.company:(w.company||{}))};
+ const previous=old?{name:old.name,description:old.description||'',modules:old.modules,company:companyRecord(old.company)}:null;
+ if(this.role(w)==='owner'&&!same(values,previous)){changes.push({table:'workspaces',op:'update',id:w.id,version:old?.updated_at||null,values});w.company={...values.company,logo_url:w.id===this.ui.current().workspace?.id?next.company.logo_url:w.company?.logo_url};}}
  const a=tableRows(before),b=tableRows(next);
  const mutable={boards:['name','description'],groups:['name','position'],tasks:['group_id','title','description','link_url','status','position','due','priority','checklist','assignee_id',...(window.WorkshBoardFeatures?['start_date','custom_values']:[])],comments:['content']};
  for(const table of ['boards','groups','tasks','comments'])for(const row of b[table]){

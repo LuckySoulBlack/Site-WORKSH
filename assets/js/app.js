@@ -1,12 +1,15 @@
-import {setupTaskFiles} from './task-files.js?v=20261023.9';
-import {setupProfilePhotos} from './profile-photos.js?v=20261023.9';
+import {setupCompanyAssets} from './company-assets.js?v=20261023.11';
+import {setupProjectExport} from './project-export.js?v=20261023.11';
+import {page} from './boards.js';
+import {setupTaskFiles} from './task-files.js?v=20261023.11';
+import {setupProfilePhotos} from './profile-photos.js?v=20261023.11';
 import {setupDriveOnboarding,connectOwnerDrive} from './drive-onboarding.js?v=20261023.6';
 import {setupUserAdmin} from './user-admin.js?v=20261023.6';
 import {client,unwrap,invoke,call} from './supabase-client.js';
 import {login,logout,session,signup} from './auth.js';
 import {changePassword} from './change-password.js';
-import {RemoteRepository} from './remote-repository.js?v=20261023.9';
-import {history,renderHistory} from './historico.js?v=20261023.9';
+import {RemoteRepository} from './remote-repository.js?v=20261023.11';
+import {history,renderHistory} from './historico.js?v=20261023.11';
 import {invite,accept,revoke,grant} from './convidar.js';
 import {upload,watchJob,download,mimes} from './upload.js';
 import {canDelete,canEdit} from './permissions.js';
@@ -34,7 +37,7 @@ async function begin(){
  const token=sessionStorage.getItem('worksh.pendingInvite');if(token){await accept(token);sessionStorage.removeItem('worksh.pendingInvite');}
  const repo=new RemoteRepository(identity.user,ui);window.WorkshRemote=repo;
  document.getElementById('cloudRefresh').onclick=()=>attempt(async()=>{const id=ui.current().board?.id;await repo.load();if(id)await repo.loadBoard(id);});
- await repo.load();setupProfilePhotos(repo,ui);setupTaskFiles(repo,ui);setupImport(repo);ui.onRender=()=>{decorate(repo);userAdmin?.mount();driveOnboarding.render();};ui.onEditor=(title,fields)=>{if(/^(Documento|Checklist|Extrair informações) — /.test(title)&&!canEdit(repo.role(ui.current().workspace),repo.members.get(ui.current().board?.id))){fields.querySelectorAll('input,textarea,select').forEach(el=>el.disabled=true);document.getElementById('saveButton').disabled=true;}if(title==='Meu perfil'){const email=fields.querySelector('[name="email"]');if(email)email.readOnly=true;}fields.querySelectorAll('.inline-note').forEach(n=>{if(n.textContent.includes('Perfil local'))n.remove();});};decorate(repo);userAdmin?.mount();driveOnboarding.render();
+ await repo.load();setupCompanyAssets(repo,ui);const projectExport=setupProjectExport(ui,{fetchProject:async(boardId,includePeople)=>{let tasks=[],cursor=null;for(let batch=0;batch<51;batch++){const rows=await page('tasks','id,title,status,due,assignee_id,created_at'+(window.WorkshBoardFeatures?',start_date':''),{board_id:boardId},cursor,100);tasks.push(...rows);if(tasks.length>5000)throw Error('O limite desta exportação é de 5000 tarefas.');if(rows.length<100)break;cursor=rows.at(-1);}const snapshot=ui.snapshot(),workspace=snapshot.workspaces.find(w=>w.boards.some(b=>b.id===boardId)),board=workspace?.boards.find(b=>b.id===boardId);if(!board)throw Error('Quadro não encontrado.');return {title:board.name,tasks:tasks.map(t=>({title:t.title,status:t.status,start_date:t.start_date,due:t.due,...(includePeople?{assignee:workspace.people.find(p=>p.id===t.assignee_id)?.name||null}:{})}))};},createShare:(board,view_type,include_people,days)=>call('create_project_share',{board,view_type,include_people,days}),listShares:board=>call('list_project_shares',{board}),revokeShare:share_id=>call('revoke_project_share',{share_id})});setupProfilePhotos(repo,ui);setupTaskFiles(repo,ui);setupImport(repo);ui.onRender=()=>{decorate(repo);projectExport.mount();userAdmin?.mount();driveOnboarding.render();};ui.onEditor=(title,fields)=>{if(/^(Documento|Checklist|Extrair informações) — /.test(title)&&!canEdit(repo.role(ui.current().workspace),repo.members.get(ui.current().board?.id))){fields.querySelectorAll('input,textarea,select').forEach(el=>el.disabled=true);document.getElementById('saveButton').disabled=true;}if(title==='Meu perfil'){const email=fields.querySelector('[name="email"]');if(email)email.readOnly=true;}fields.querySelectorAll('.inline-note').forEach(n=>{if(n.textContent.includes('Perfil local'))n.remove();});};decorate(repo);projectExport.mount();userAdmin?.mount();driveOnboarding.render();
  for(const eventName of ['change','submit'])document.addEventListener(eventName,event=>{if(repo.busy){event.preventDefault();event.stopImmediatePropagation();status('Aguarde a gravação atual.');}},true);
  document.addEventListener('click',event=>{
  const target=event.target.closest('[data-action]');if(!target)return;const a=target.dataset.action,id=target.dataset.id;

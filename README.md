@@ -50,3 +50,5 @@ Google Drive por conta no cadastro (ativação pendente): [estado e implantaçã
 
 
 Detalhes da revisão local de colunas, Gantt e fotos: [quadros flexíveis](docs/quadros-flexiveis.md).
+
+Identidade da empresa, exportação HTML e acompanhamento externo: [detalhes da entrega local](docs/identidade-compartilhamento.md).
