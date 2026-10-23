@@ -266,6 +266,7 @@ togglePassword.addEventListener('click', () => {
 });
 loginForm.addEventListener('submit', event => {
  event.preventDefault();
+ if(window.WORKSH_CONFIG?.enabled){loginStatus.hidden=false;loginStatus.textContent='Conectando...';return;}
  loginForm.reset();
  window.location.assign('workspace.html');
 });

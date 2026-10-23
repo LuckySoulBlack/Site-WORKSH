@@ -1,0 +1,66 @@
+import {client,unwrap,invoke} from './supabase-client.js';
+import {login,logout,session,signup} from './auth.js';
+import {changePassword} from './change-password.js';
+import {RemoteRepository} from './remote-repository.js';
+import {history} from './historico.js';
+import {invite,accept,revoke,grant} from './convidar.js';
+import {upload,watchJob,download,mimes} from './upload.js';
+import {canDelete,canEdit} from './permissions.js';
+import {preview,seedSQL,importConfirmed} from '../../scripts/migrate-localstorage.js';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const ui=window.WorkshUI;
+function status(message){if(ui)ui.message(message);else {const p=document.getElementById('loginStatus');if(p){p.hidden=false;p.textContent=message;}}}
+async function attempt(fn){try{return await fn();}catch(e){status(e.message||'Não foi possível concluir.');}}
+function editor(title,fields,fn,save='Salvar'){ui.editor(title,fields,async fd=>{await attempt(async()=>{await fn(fd);ui.close();});},save);}
+function passwordScreen(){const main=document.getElementById('main');main.innerHTML='<div class="account-card"><h1>Defina sua nova senha</h1><p>Atualize a senha para liberar seus painéis.</p><form id="cloudPassword"><label>Nova senha<input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label><label>Confirme a senha<input name="confirm" type="password" autocomplete="new-password" minlength="12" required></label><button class="button primary">Atualizar senha</button><p role="status"></p></form></div>';document.getElementById('sidebar').innerHTML='';
+ const form=document.getElementById('cloudPassword');form.addEventListener('submit',e=>{e.preventDefault();attempt(async()=>{const f=new FormData(form);if(f.get('password')!==f.get('confirm'))throw Error('As senhas precisam ser iguais.');form.querySelector('button').disabled=true;try{await changePassword(String(f.get('password')));location.reload();}finally{form.querySelector('button').disabled=false;}});});}
+async function begin(){
+ if(!window.WORKSH_CONFIG?.enabled)return;
+ const incoming=new URLSearchParams(location.hash.slice(1)).get('invite');
+ if(incoming){sessionStorage.setItem('worksh.pendingInvite',incoming);historyReplace();}
+ const form=document.getElementById('workspaceLogin');
+ if(form){form.addEventListener('submit',e=>{e.preventDefault();e.stopImmediatePropagation();attempt(async()=>{const button=form.querySelector('[type=submit]');button.disabled=true;try{await login(document.getElementById('loginEmail').value.trim(),document.getElementById('loginPassword').value);location.assign('workspace.html');}finally{button.disabled=false;}});},true);return;}
+ if(!ui)return;
+ document.querySelector('.local-badge').textContent='● Sessão protegida';
+ let identity;try{identity=await session();}catch{ui.loading('<h1>Entre na sua conta</h1><p>Acesse pela página inicial para abrir seus workspaces.</p><a class="button primary" href="index.html">Entrar</a><button class="button" id="cloudSignup">Criar conta</button>');document.getElementById('cloudSignup').onclick=()=>editor('Criar conta','<label>Nome<input name="name" required></label><label>E-mail<input name="email" type="email" required></label><label>Senha<input name="password" type="password" minlength="12" required></label>',async f=>{const result=await signup(f.get('email'),f.get('password'),f.get('name'));status(result.message);});return;}
+ const toolbar=document.createElement('div');toolbar.className='cloud-controls';toolbar.innerHTML='<button class="top-button" id="cloudRefresh">Atualizar</button><button class="top-button" id="cloudLogout">Sair</button>';document.querySelector('.top-right').append(toolbar);document.getElementById('cloudLogout').onclick=()=>attempt(logout);
+ if(identity.must_change_password){passwordScreen();return;}
+ const token=sessionStorage.getItem('worksh.pendingInvite');if(token){await accept(token);sessionStorage.removeItem('worksh.pendingInvite');}
+ const repo=new RemoteRepository(identity.user,ui);window.WorkshRemote=repo;
+ document.getElementById('cloudRefresh').onclick=()=>attempt(async()=>{const id=ui.current().board?.id;await repo.load();if(id)await repo.loadBoard(id);});
+ await repo.load();setupImport(repo);ui.onRender=()=>decorate(repo);ui.onEditor=(title,fields)=>{if(title==='Meu perfil'){const email=fields.querySelector('[name="email"]');if(email)email.readOnly=true;}fields.querySelectorAll('.inline-note').forEach(n=>{if(n.textContent.includes('Perfil local'))n.remove();});};decorate(repo);
+ for(const eventName of ['change','submit'])document.addEventListener(eventName,event=>{if(repo.busy){event.preventDefault();event.stopImmediatePropagation();status('Aguarde a gravação atual.');}},true);
+ document.addEventListener('click',event=>{
+ const target=event.target.closest('[data-action]');if(!target)return;const a=target.dataset.action,id=target.dataset.id;
+ if(repo.busy && !['close','export'].includes(a)){event.preventDefault();event.stopImmediatePropagation();status('Aguarde a gravação atual.');return;}
+ if(a==='board'){event.preventDefault();event.stopImmediatePropagation();attempt(()=>repo.loadBoard(id).then(()=>ui.openBoard(id)));return;}
+ if(a==='new-task'&&!ui.current().board?.groups.length){event.preventDefault();event.stopImmediatePropagation();status('Crie um grupo antes da primeira tarefa.');return;}
+ if(['new-person','new-guest','edit-person','delete-person','edit-integration','import','undo'].includes(a)){
+ event.preventDefault();event.stopImmediatePropagation();if(['new-person','new-guest'].includes(a))showInvite(repo);else status('Use os controles de acesso e integração do painel conectado.');return;}
+ if(a==='page'&&id==='activity'){event.preventDefault();event.stopImmediatePropagation();showHistory(repo);return;}
+ if(a?.startsWith('delete-')&&!canDelete(repo.role(ui.current().workspace))){event.preventDefault();event.stopImmediatePropagation();status('Somente o proprietário pode excluir.');}
+ },true);
+}
+function historyReplace(){window.history.replaceState(null,'',location.pathname+location.search);}
+function showInvite(repo){const {board,workspace}=ui.current();if(!board||!canDelete(repo.role(workspace))){status('Abra um painel do qual você é proprietário para convidar.');return;}editor('Convidar para '+board.name,'<label>E-mail<input type="email" name="email" required></label>',async f=>{await invite(board.id,f.get('email'));status('Convite enfileirado para envio.');},'Convidar');}
+async function showHistory(repo){const board=ui.current().board;if(!board){status('Abra um painel para consultar o histórico.');return;}let cursor=null;const render=async()=>{const rows=await history(board.id,cursor);ui.editor('Histórico — '+board.name,rows.map(r=>`<article class="activity-item"><strong>${esc(r.action)} · ${esc(r.table_name)}</strong><small>${esc(new Date(r.created_at).toLocaleString('pt-BR'))} · ${esc(r.actor_id||'Sistema')}</small><details><summary>Ver alterações</summary><pre>${esc(JSON.stringify({antes:r.old_data,depois:r.new_data},null,2))}</pre></details></article>`).join('')||'<p>Nenhuma alteração visível.</p>',()=>{if(rows.length===50){cursor=rows.at(-1);attempt(render);}else ui.close();},rows.length===50?'Próxima página':'Fechar');};await attempt(render);}
+function decorate(repo){
+ const {workspace,board}=ui.current();if(!workspace)return;
+ const role=repo.role(workspace),editable=board?canEdit(role,repo.members.get(board.id)):role==='owner';
+ const badge=document.querySelector('.local-badge');if(badge)badge.textContent='● Conectado ao Supabase';
+ document.querySelectorAll('[data-action^="delete-"]').forEach(b=>{b.hidden=!canDelete(role);});
+ document.querySelectorAll('[data-action="edit-workspace"],[data-action="new-board"],[data-action="edit-company"]').forEach(b=>{b.hidden=role!=='owner';});
+ document.querySelectorAll('[data-task], [data-action="new-task"], [data-action="new-group"], [data-action="edit-group"]').forEach(b=>{b.disabled=!editable;});
+ if(!document.getElementById('cloudTools')){const bar=document.createElement('div');bar.id='cloudTools';bar.className='toolbar';bar.innerHTML='<button class="button" data-cloud="invite">Convidar</button><button class="button" data-cloud="access">Acessos</button><button class="button" data-cloud="history">Histórico do painel</button><button class="button" data-cloud="files">Arquivos</button><button class="button" data-cloud="drive">Conectar Drive</button><button class="button" data-cloud="more">Mais tarefas</button>';document.getElementById('main').prepend(bar);
+ bar.onclick=e=>attempt(async()=>{const action=e.target.dataset.cloud;if(action==='invite')showInvite(repo);if(action==='history')await showHistory(repo);if(action==='access'){if(!board||role!=='owner')throw Error('Abra um painel do qual você é proprietário.');const members=await unwrap(client().from('board_members').select('user_id,can_edit').eq('board_id',board.id));ui.editor('Acessos ao painel',members.map(m=>`<div class="member-row"><span>${esc(workspace.people.find(p=>p.id===m.user_id)?.name||m.user_id)}</span><button type="button" class="button" data-access-toggle="${m.user_id}">${m.can_edit?'Permitir só leitura':'Permitir edição'}</button><button type="button" class="button" data-access-remove="${m.user_id}">Remover acesso</button></div>`).join('')||'<p>Nenhum convidado neste painel.</p>',()=>ui.close(),'Fechar');document.querySelectorAll('[data-access-toggle]').forEach(b=>b.onclick=()=>attempt(async()=>{const m=members.find(m=>m.user_id===b.dataset.accessToggle);await grant(board.id,m.user_id,!m.can_edit);ui.close();status('Permissão atualizada.');}));document.querySelectorAll('[data-access-remove]').forEach(b=>b.onclick=()=>attempt(async()=>{await revoke(board.id,b.dataset.accessRemove);ui.close();status('Acesso removido.');}));}if(action==='more'&&board)await repo.loadBoard(board.id,true);
+ if(action==='drive'){const result=await invoke('google-oauth-start',{workspace_id:workspace.id});location.assign(result.url);}
+ if(action==='files'){if(!board)throw Error('Abra um painel primeiro.');const rows=await unwrap(client().from('attachments').select('id,file_name,size_bytes,created_at').eq('board_id',board.id).order('created_at',{ascending:false}).limit(50));ui.editor('Arquivos',`<label>Anexar arquivo de até 5 MB<input type="file" id="cloudFile" accept="${mimes.join(',')}" ${!editable?'disabled':''}></label><div>${rows.map(a=>`<button type="button" class="button" data-file="${a.id}">${esc(a.file_name)}</button>${role==='owner'?`<button type="button" class="button" data-remove-file="${a.id}">Remover</button>`:''}`).join('')||'<p>Nenhum arquivo neste painel.</p>'}</div>`,()=>ui.close(),'Fechar');document.getElementById('cloudFile').onchange=e=>attempt(async()=>{const file=e.target.files[0];if(!file)return;const id=await upload(file,board.id);status('Arquivo recebido. Processando envio ao Drive.');const abort=new AbortController();document.getElementById('editor').addEventListener('close',()=>abort.abort(),{once:true});await watchJob(id,j=>status(j.status==='done'?'Arquivo salvo no Drive.':j.last_error||'Processando arquivo...'),abort.signal);});document.querySelectorAll('[data-file]').forEach(b=>b.onclick=()=>attempt(()=>download(b.dataset.file,rows.find(a=>a.id===b.dataset.file).file_name)));document.querySelectorAll('[data-remove-file]').forEach(b=>b.onclick=()=>attempt(async()=>{await invoke('file-access',{attachment_id:b.dataset.removeFile,action:'delete'});ui.close();status('Remoção enfileirada. O arquivo será movido para a lixeira do Drive.');}));}
+ });}
+ const bar=document.getElementById('cloudTools');bar.querySelector('[data-cloud="invite"]').hidden=role!=='owner';bar.querySelector('[data-cloud="access"]').hidden=role!=='owner';bar.querySelector('[data-cloud="drive"]').hidden=role!=='owner';bar.querySelector('[data-cloud="more"]').hidden=!board?._hasMore;
+
+}
+begin().catch(e=>{if(ui)ui.loading('<h1>Não foi possível conectar</h1><p>'+esc(e.message)+'</p><button class="button" onclick="location.reload()">Tentar novamente</button>');else status(e.message);});
+
+function setupImport(repo){
+ if(!document.getElementById('cloudImport')){const button=document.createElement('button');button.id='cloudImport';button.className='top-button';button.textContent='Importar dados locais';document.querySelector('.top-right').append(button);button.onclick=()=>attempt(async()=>{const plan=await preview(repo.identity.id);ui.editor('Importar dados deste navegador',`<p>${esc(plan.warning)}</p><pre>${esc(JSON.stringify(plan.counts,null,2))}</pre><p>Uma cópia será criada na sua conta. Os dados do navegador serão mantidos.</p><button type="button" class="button" id="cloudSeed">Baixar seed.sql</button>`,async()=>{await importConfirmed(plan);await repo.load();status('Importação concluída. Dados locais preservados.');},'Confirmar importação');document.getElementById('cloudSeed').onclick=()=>{const blob=new Blob([seedSQL(plan)],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='worksh-seed.sql';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};});}
+}

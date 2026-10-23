@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+const source={version:1,company:{name:'QA'},workspaces:[{id:'local-workspace',name:'QA',description:'',modules:['kanban'],people:[{id:'local-person',name:'QA person',email:'qa@example.invalid'}],activity:[{text:'local event'}],boards:[{id:'local-board',name:'QA',groups:[{id:'local-group',name:'Planejar'}],tasks:[{id:'local-task',title:"O'Brien",description:'QA',group:'local-group',person:'local-person',status:'todo',priority:'normal',due:'',checklist:[],comments:[{id:'local-comment',text:'QA',date:'2026-10-23'}]}]}]}]};
+const raw=JSON.stringify(source);globalThis.localStorage={getItem(key){assert.equal(key,'worksh.workspace.v1');return raw;}};
+const {preview,seedSQL}=await import('./migrate-localstorage.js');
+const owner='00000000-0000-4000-8000-000000000001';
+const a=await preview(owner),b=await preview(owner),other=await preview('00000000-0000-4000-8000-000000000002');
+assert.deepEqual(a,b);assert.notEqual(a.rows.workspaces[0].id,other.rows.workspaces[0].id);
+assert.equal(a.rows.tasks[0].board_id,a.rows.boards[0].id);assert.equal(a.rows.tasks[0].group_id,a.rows.groups[0].id);assert.equal(a.rows.comments[0].task_id,a.rows.tasks[0].id);
+assert.equal(a.rows.board_settings.length,0);assert.equal(a.rows.tasks[0].assignee_id,undefined);assert.ok(seedSQL(a).includes("O''Brien"));assert.equal(localStorage.getItem('worksh.workspace.v1'),raw);
+console.log('PASS: deterministic tenant-specific UUIDs, relationships, SQL escaping, no implicit identities, local data preserved');

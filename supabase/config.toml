@@ -1,0 +1,23 @@
+project_id = "zazkecvrjmtbvmylxgij"
+
+# Authentication is verified inside each handler with auth.getUser, the worker
+# secret, or single-use OAuth state. Supports current asymmetric Auth JWTs.
+[functions.change-password]
+verify_jwt = true
+[functions.invite-member]
+verify_jwt = true
+[functions.queue-worker]
+verify_jwt = false
+[functions.drive-worker]
+verify_jwt = false
+[functions.google-oauth-start]
+verify_jwt = true
+[functions.google-oauth-callback]
+verify_jwt = false
+[functions.file-access]
+verify_jwt = true
+
+# Hosted Free runtime: 256 MB maximum memory, 150 s wall time.
+# These are platform limits, not configurable per-function TOML settings.
+# External requests time out at 40 s; worker stops taking jobs after 100 s.
+

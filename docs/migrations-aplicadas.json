@@ -1,0 +1,50 @@
+[
+  {
+    "version": "20261022200518",
+    "name": "worksh_schema_security"
+  },
+  {
+    "version": "20261022200525",
+    "name": "worksh_business"
+  },
+  {
+    "version": "20261023160542",
+    "name": "worksh_hardening_workers"
+  },
+  {
+    "version": "20261023160545",
+    "name": "worksh_frontend_fields"
+  },
+  {
+    "version": "20261023161254",
+    "name": "worksh_scheduler"
+  },
+  {
+    "version": "20261023161810",
+    "name": "worksh_final_checks"
+  },
+  {
+    "version": "20261023162646",
+    "name": "worksh_housekeeping"
+  },
+  {
+    "version": "20261023163311",
+    "name": "worksh_atomic_edits"
+  },
+  {
+    "version": "20261023163525",
+    "name": "worksh_audit_finalize"
+  },
+  {
+    "version": "20261023163808",
+    "name": "worksh_queue_health"
+  },
+  {
+    "version": "20261023164111",
+    "name": "worksh_upload_conflict_fix"
+  },
+  {
+    "version": "20261023164523",
+    "name": "worksh_temp_storage_cleanup"
+  }
+]
