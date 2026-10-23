@@ -47,3 +47,6 @@ Gestão de contas da equipe: [perfis e acessos](docs/perfis-e-acessos.md).
 Configurações administrativas: [perfis, convites, exclusões e Drive](docs/configuracoes-de-perfis.md).
 
 Google Drive por conta no cadastro (ativação pendente): [estado e implantação](docs/drive-no-cadastro.md).
+
+
+Detalhes da revisão local de colunas, Gantt e fotos: [quadros flexíveis](docs/quadros-flexiveis.md).
