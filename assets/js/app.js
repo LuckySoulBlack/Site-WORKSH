@@ -58,6 +58,7 @@ async function showHistory(repo){const board=ui.current().board;if(!board){statu
 function decorate(repo){
  const {workspace,board}=ui.current();document.querySelectorAll('[data-action="new-workspace"]').forEach(b=>b.hidden=window.WorkshAccountRole==='guest');if(!workspace)return;
  if(window.WorkshAccountRole==='guest')document.querySelectorAll('[data-action="page"][data-id="people"],[data-action="page"][data-id="reports"]').forEach(b=>b.hidden=true);
+ window.WorkshCanRemoveColumns=repo.role(workspace)==='owner';
  const role=repo.role(workspace),editable=board?canEdit(role,repo.members.get(board.id)):role==='owner';
  const badge=document.querySelector('.local-badge');if(badge)badge.textContent='● Sincronizado';
  document.querySelectorAll('[data-action^="delete-"]').forEach(b=>{b.hidden=!canDelete(role);});

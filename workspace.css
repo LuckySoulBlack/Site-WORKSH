@@ -69,3 +69,5 @@ html[data-saving="true"] main input, html[data-saving="true"] aside button { poi
 .rename-error{color:#d94b68}.rename-workspace{margin-top:-5px;margin-bottom:4px}.rename-workspace .ui-icon{width:15px;height:15px}
 
 #selectedActions{display:inline-flex;gap:8px;flex-wrap:wrap}
+
+.document-preview{white-space:pre-wrap;overflow-wrap:anywhere;padding:16px;border:1px solid var(--line);border-radius:8px;min-height:60px}.document-preview img{display:block;max-width:100%;max-height:420px;object-fit:contain;margin:12px 0}#fields [role=alert]{color:#e16b84}

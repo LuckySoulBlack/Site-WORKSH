@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+const source=readFileSync('workspace.js','utf8');
+let handler,fail=false,release;
+const note={hidden:true},button={disabled:false};
+const context={structuredClone,TextEncoder,data:{columns:[],tasks:[{id:'t',custom_values:{keep:'safe'}}]},board(){return context.data;},columns(){return context.data.columns;},baseColumns:[],columnTypes:{doc:'Documentos',text:'Texto'},uid:()=>String(Math.random()).slice(2),esc:s=>String(s).replaceAll('<','&lt;'),input:()=>'',text:(fd,key)=>String(fd.get(key)||'').trim(),openEditor:(_title,_html,save)=>handler=save,fields:{querySelector:()=>note},document:{getElementById:()=>button},render(){},persist:()=>true,toast(){},window:{WorkshBoardFeatures:true,WorkshRemote:{save:async()=>{if(release)await new Promise(r=>release=r);if(fail)throw Error('Falha de rede');}}}};
+vm.createContext(context);vm.runInContext(source.slice(source.indexOf('async function saveBoardEditor'),source.indexOf('function documentCell')),context);
+const fd=(type,name='',remove=[])=>({get:key=>({type,name}[key]||''),getAll:key=>key==='removeColumn'?remove:[]});
+context.addColumn();assert.equal(await handler(fd('doc')),true);assert.equal(context.data.columns[0].name,'Documentos');assert.equal(context.data.columns[0].type,'doc');
+context.addColumn();assert.equal(await handler(fd('doc')),true);assert.equal(context.data.columns[1].name,'Documentos 2');
+context.addColumn();assert.equal(await handler(fd('')),true);assert.equal(context.data.columns.length,2);
+const id=context.data.columns[0].id;context.addColumn();assert.equal(await handler(fd('','',[id])),true);assert.equal(context.data.columns.length,1);assert.equal(context.data.tasks[0].custom_values.keep,'safe');
+fail=true;context.addColumn();assert.equal(await handler(fd('text')),false);assert.equal(note.textContent,'Falha de rede');assert.equal(button.disabled,false);
+assert.ok(context.documentPreview('<script> ![Print](https://example.com/test.png)').includes('&lt;script>'));assert.ok(context.documentPreview('![Print](https://example.com/test.png)').includes('<img'));assert.ok(!context.documentPreview('![x](javascript:alert(1))').includes('<img'));
+console.log('PASS: optional names, repeated types, visibility-only, column removal preserves row values, failed remote save remains open, safe document image preview.');
