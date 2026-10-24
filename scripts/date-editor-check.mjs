@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+const source=readFileSync(new URL('../workspace.js',import.meta.url),'utf8');
+let saved=[],release;
+const context={structuredClone,Date,FormData:class{constructor(form){return form.values;}},data:{workspaces:[{boards:[{tasks:[{id:'task',start_date:'2026-10-21',due:'2026-10-27',custom_values:{}}]}]}]},columns:()=>[{id:'start_date',name:'Cronograma'},{id:'due',name:'Entrega'},{id:'c_date',type:'date'}],log(){},render(){},toast(){},window:{WorkshRemote:{save:async snapshot=>{saved.push(snapshot);await new Promise(resolve=>release=resolve);}}}};
+context.board=()=>context.data.workspaces[0].boards[0];
+vm.createContext(context);vm.runInContext(source.slice(source.indexOf('async function saveDateCell('),source.indexOf('function cell(t,c)')),context);
+const note={hidden:true},button={disabled:false};
+const form={dataset:{dateTask:'task',dateColumn:'start_date'},values:new Map([['start','2026-11-01'],['end','2026-11-15']]),querySelectorAll:()=>[button],querySelector:s=>s==='[role="alert"]'?note:button};
+assert.equal(saved.length,0);const pending=context.saveDateCell(form);assert.equal(saved.length,1);assert.equal(button.disabled,true);await context.saveDateCell(form);assert.equal(saved.length,1);release();await pending;
+assert.equal(saved[0].workspaces[0].boards[0].tasks[0].start_date,'2026-11-01');assert.equal(saved[0].workspaces[0].boards[0].tasks[0].due,'2026-11-15');
+form.values.set('start','2026-11-30');await context.saveDateCell(form);assert.equal(saved.length,1);assert.equal(note.hidden,false);assert.equal(context.board().tasks[0].start_date,'2026-11-01');
+form.values.set('start','0026-01-01');await context.saveDateCell(form);assert.equal(saved.length,1);
+form.dataset.dateColumn='due';const cleared=context.saveDateCell(form,true);release();await cleared;assert.equal(context.board().tasks[0].start_date,'2026-11-01');assert.equal(context.board().tasks[0].due,'');
+form.dataset.dateColumn='c_date';form.values.set('end','2020-01-01');const custom=context.saveDateCell(form);release();await custom;assert.equal(context.board().tasks[0].custom_values.c_date,'2020-01-01');assert.equal(context.board().tasks[0].start_date,'2026-11-01');
+console.log('PASS: one awaited write for date range, duplicate submit blocked, invalid/partial years rejected, no mutation on invalid range, delivery clear preserves start, custom dates independent.');

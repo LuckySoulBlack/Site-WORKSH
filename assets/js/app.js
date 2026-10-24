@@ -1,15 +1,15 @@
-import {setupCompanyAssets} from './company-assets.js?v=20261023.13';
-import {setupProjectExport} from './project-export.js?v=20261023.13';
-import {fetchExportProject} from './project-data.js?v=20261023.13';
-import {setupTaskFiles} from './task-files.js?v=20261023.13';
-import {setupProfilePhotos} from './profile-photos.js?v=20261023.13';
+import {setupCompanyAssets} from './company-assets.js?v=20261023.14';
+import {setupProjectExport} from './project-export.js?v=20261023.14';
+import {fetchExportProject} from './project-data.js?v=20261023.14';
+import {setupTaskFiles} from './task-files.js?v=20261023.14';
+import {setupProfilePhotos} from './profile-photos.js?v=20261023.14';
 import {setupDriveOnboarding,connectOwnerDrive} from './drive-onboarding.js?v=20261023.6';
 import {setupUserAdmin} from './user-admin.js?v=20261023.6';
 import {client,unwrap,invoke,call} from './supabase-client.js';
 import {login,logout,session,signup} from './auth.js';
 import {changePassword} from './change-password.js';
-import {RemoteRepository} from './remote-repository.js?v=20261023.13';
-import {history,renderHistory} from './historico.js?v=20261023.13';
+import {RemoteRepository} from './remote-repository.js?v=20261023.14';
+import {history,renderHistory} from './historico.js?v=20261023.14';
 import {invite,accept,revoke,grant} from './convidar.js';
 import {upload,watchJob,download,mimes} from './upload.js';
 import {canDelete,canEdit} from './permissions.js';
@@ -62,7 +62,7 @@ function decorate(repo){
  const badge=document.querySelector('.local-badge');if(badge)badge.textContent='● Sincronizado';
  document.querySelectorAll('[data-action^="delete-"]').forEach(b=>{b.hidden=!canDelete(role);});
  document.querySelectorAll('[data-action="edit-workspace"],[data-action="new-board"],[data-action="edit-company"]').forEach(b=>{b.hidden=role!=='owner';});
- document.querySelectorAll('[data-task], [data-quick-group] input, [data-action="add-column"], [data-action="checklist"], [data-action="new-task"], [data-action="new-group"], [data-action="edit-group"]').forEach(b=>{b.disabled=!editable;});
+ document.querySelectorAll('[data-task], [data-date-task] input, [data-date-task] button, [data-quick-group] input, [data-action="add-column"], [data-action="checklist"], [data-action="new-task"], [data-action="new-group"], [data-action="edit-group"]').forEach(b=>{b.disabled=!editable;});
  if(ui.current().page==='settings'){document.querySelectorAll('.inline-note').forEach(n=>{if(n.textContent.includes('Perfil local nesta etapa'))n.remove();});const drive=document.querySelector('[data-action="edit-integration"][data-id="drive"]');if(drive&&window.WorkshAccountRole!=='guest'){drive.hidden=true;const connect=document.createElement('button');connect.className='button primary';connect.textContent='Conectar meu Google Drive';drive.after(connect);connect.onclick=()=>attempt(async()=>{await connectOwnerDrive();});}return;}
  if(!document.getElementById('cloudTools')){const bar=document.createElement('div');bar.id='cloudTools';bar.className='toolbar';bar.innerHTML='<button class="button" data-cloud="invite">Convidar</button><button class="button" data-cloud="access">Acessos</button><button class="button" data-cloud="history">Histórico do painel</button><button class="button" data-cloud="files">Arquivos</button><button class="button" data-cloud="drive">Conectar Drive</button><button class="button" data-cloud="more">Mais tarefas</button>';document.getElementById('main').prepend(bar);
  bar.onclick=e=>attempt(async()=>{const action=e.target.dataset.cloud;if(action==='invite')showInvite(repo);if(action==='history')await showHistory(repo);if(action==='access'){if(!board||role!=='owner')throw Error('Abra um painel do qual você é proprietário.');const members=await unwrap(client().from('board_members').select('user_id,can_edit').eq('board_id',board.id));ui.editor('Acessos ao painel','<label>E-mail de usuário cadastrado<input id="teamMemberEmail" type="email" placeholder="pessoa@empresa.com"></label><button type="button" class="button primary" id="addTeamMember">Adicionar ao painel</button>'+ (members.map(m=>`<div class="member-row"><span>${esc(workspace.people.find(p=>p.id===m.user_id)?.name||m.user_id)}</span><button type="button" class="button" data-access-toggle="${m.user_id}">${m.can_edit?'Permitir só leitura':'Permitir edição'}</button><button type="button" class="button" data-access-remove="${m.user_id}">Remover acesso</button></div>`).join('')||'<p>Nenhum membro neste painel.</p>'),()=>ui.close(),'Fechar');document.getElementById('addTeamMember').onclick=()=>attempt(async()=>{const email=document.getElementById('teamMemberEmail').value.trim();if(!email)throw Error('Informe o e-mail.');await call('add_team_member',{board:board.id,email_address:email,editable:true});await repo.loadBoard(board.id);ui.close();status('Usuário adicionado ao painel.');});document.querySelectorAll('[data-access-toggle]').forEach(b=>b.onclick=()=>attempt(async()=>{const m=members.find(m=>m.user_id===b.dataset.accessToggle);await grant(board.id,m.user_id,!m.can_edit);ui.close();status('Permissão atualizada.');}));document.querySelectorAll('[data-access-remove]').forEach(b=>b.onclick=()=>attempt(async()=>{await revoke(board.id,b.dataset.accessRemove);ui.close();status('Acesso removido.');}));}if(action==='more'&&board)await repo.loadBoard(board.id,true);
