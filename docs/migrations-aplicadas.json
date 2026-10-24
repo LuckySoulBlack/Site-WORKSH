@@ -58,5 +58,20 @@
   {
     "version": "20261023190848",
     "name": "platform_profiles_settings"
+  },
+  {
+    "version": "20261024001208",
+    "name": "flexible_boards_avatars",
+    "source_version": "20261023224222"
+  },
+  {
+    "version": "20261024001411",
+    "name": "canceled_task_status",
+    "source_version": "20261024001228"
+  },
+  {
+    "version": "20261024001522",
+    "name": "pin_board_features_search_path",
+    "source_version": "20261024001514"
   }
 ]

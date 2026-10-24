@@ -1,7 +1,7 @@
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const entities={project_shares:'o compartilhamento externo',boards:'o quadro',groups:'o grupo',tasks:'a tarefa',comments:'o comentário',board_members:'o acesso ao quadro',workspace_members:'o acesso ao ambiente',workspaces:'o ambiente',attachments:'o arquivo',board_settings:'as configurações do quadro',invitations:'o convite',upload_jobs:'o envio de arquivo',oauth_states:'a autorização de conexão'};
 const fields={name:'Nome',title:'Título',description:'Descrição',content:'Comentário',status:'Situação',priority:'Prioridade',due:'Prazo',link_url:'Link',can_edit:'Permissão de edição',position:'Ordem',checklist:'Checklist',modules:'Funcionalidades'};
-const values={todo:'A fazer',progress:'Em andamento',blocked:'Bloqueado',done:'Concluído',normal:'Normal',high:'Alta',low:'Baixa',urgent:'Urgente'};
+const values={todo:'A fazer',progress:'Em andamento',blocked:'Bloqueado',done:'Concluído',canceled:'Cancelado',normal:'Normal',high:'Alta',low:'Baixa',urgent:'Urgente'};
 function valueText(value){if(value===null||value===undefined||value==='')return 'Não informado';if(typeof value==='boolean')return value?'Sim':'Não';if(typeof value==='object')return Array.isArray(value)?`${value.length} item(ns)`:'Informações atualizadas';return values[value]||String(value);}
 export function renderHistory(rows,{userId,profile={},people=[]}={}){
  const names=new Map(people.map(p=>[p.id,p.name||p.full_name]));

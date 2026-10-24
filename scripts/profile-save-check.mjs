@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+const source=readFileSync(new URL('../workspace.js',import.meta.url),'utf8');
+let handler,uploads=0,saves=0,fail=false,release;
+const button={disabled:false,textContent:'Salvar'},note={hidden:true};
+const initial={user_id:'test-user',profile:{name:'Antes',avatar_path:'old/photo.webp'},workspaces:[{people:[{id:'test-user',name:'Antes'}]}]};
+const context={data:structuredClone(initial),structuredClone,document:{getElementById:id=>id==='saveButton'?button:note},input:()=>'',select:()=>'',optionList:()=>'',text:(fd,key)=>fd.get(key)||'',openEditor:(_title,html,save)=>{assert.ok(html.includes('name="profilePhoto"'));handler=save;},render(){},toast(){},window:{WorkshUploadProfilePhoto:async()=>{uploads++;await new Promise(resolve=>release=resolve);if(fail)throw Error('Envio indisponível');return {avatar_path:'test-user/avatar.webp',avatar_url:'https://example.invalid/signed'};},WorkshRemote:{save:async next=>{saves++;context.saved=structuredClone(next);}}}};
+vm.createContext(context);vm.runInContext(source.slice(source.indexOf('function profileEditor()'),source.indexOf('function companyEditor()')),context);
+context.profileEditor();assert.equal(uploads,0);assert.equal(saves,0);
+const fields=new Map([['name','Nome editado'],['email','test@example.invalid'],['phone','123'],['theme','dark'],['profilePhoto',{size:120}]]);
+const saving=handler(fields);assert.equal(button.disabled,true);assert.equal(await handler(fields),false);assert.equal(uploads,1);assert.equal(saves,0);release();assert.equal(await saving,true);assert.equal(saves,1);assert.equal(context.saved.profile.name,'Nome editado');assert.equal(context.saved.profile.avatar_path,'test-user/avatar.webp');assert.equal(context.saved.workspaces[0].people[0].avatar_url,'https://example.invalid/signed');assert.equal(button.disabled,false);
+context.profileEditor();fail=true;const failed=handler(fields);release();assert.equal(await failed,false);assert.equal(saves,1);assert.equal(note.hidden,false);assert.equal(note.textContent,'Envio indisponível');assert.equal(button.disabled,false);
+console.log('PASS: photo waits for Save, combines form edits, awaits persistence, blocks duplicate submit, keeps dialog open on upload failure.');
+
+let storageCalls=0;
+globalThis.window={WorkshBoardFeatures:true,WORKSH_CONFIG:{enabled:true,SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'fake'},supabase:{createClient:()=>({storage:{from:bucket=>{assert.equal(bucket,'profile-photos');return {upload:async(path,blob,options)=>{storageCalls++;assert.equal(path,'test-user/avatar.webp');assert.equal(options.upsert,true);assert.equal(blob.type,'image/webp');return {data:{path},error:null};},createSignedUrl:async()=>({data:{signedUrl:'https://example.invalid/avatar?token=test'},error:null})};}}})}};
+globalThis.createImageBitmap=async()=>({width:900,height:600,close(){}});
+globalThis.document={createElement:()=>({getContext:()=>({drawImage(...args){assert.equal(args[1],150);assert.equal(args[3],600);}}),toBlob:cb=>cb(new Blob(['test'],{type:'image/webp'}))})};
+const {setupProfilePhotos}=await import('../assets/js/profile-photos.js');setupProfilePhotos({identity:{id:'test-user'}});assert.equal(storageCalls,0);
+const uploaded=await window.WorkshUploadProfilePhoto({type:'image/jpeg',size:100});assert.equal(uploaded.avatar_path,'test-user/avatar.webp');assert.ok(uploaded.avatar_url.includes('&v='));assert.equal(storageCalls,1);
+await assert.rejects(()=>window.WorkshUploadProfilePhoto({type:'application/pdf',size:100}));assert.equal(storageCalls,1);
+console.log('PASS: centered crop, WebP upload to own private folder, authenticated signed URL and invalid file rejection. Storage/Auth mocked.');
