@@ -83,5 +83,10 @@
     "version": "20261024005150",
     "name": "cooperative_task_assignees",
     "source_version": "20261024004514"
+  },
+  {
+    "version": "20261024052910",
+    "name": "delete_unupdated_rows",
+    "source_version": "20261024052633"
   }
 ]

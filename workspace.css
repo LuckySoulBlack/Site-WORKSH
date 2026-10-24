@@ -67,3 +67,5 @@ html[data-saving="true"] main input, html[data-saving="true"] aside button { poi
 .task-assignees .person-badge{font-size:13px;font-weight:500}
 
 .rename-error{color:#d94b68}.rename-workspace{margin-top:-5px;margin-bottom:4px}.rename-workspace .ui-icon{width:15px;height:15px}
+
+#selectedActions{display:inline-flex;gap:8px;flex-wrap:wrap}
