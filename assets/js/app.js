@@ -1,15 +1,15 @@
-import {setupCompanyAssets} from './company-assets.js?v=20261023.16';
-import {setupProjectExport} from './project-export.js?v=20261023.16';
-import {fetchExportProject} from './project-data.js?v=20261023.16';
-import {setupTaskFiles} from './task-files.js?v=20261023.16';
-import {setupProfilePhotos} from './profile-photos.js?v=20261023.16';
+import {setupCompanyAssets} from './company-assets.js?v=20261024.1';
+import {setupProjectExport} from './project-export.js?v=20261024.1';
+import {fetchExportProject} from './project-data.js?v=20261024.1';
+import {setupTaskFiles} from './task-files.js?v=20261024.1';
+import {setupProfilePhotos} from './profile-photos.js?v=20261024.1';
 import {setupDriveOnboarding,connectOwnerDrive} from './drive-onboarding.js?v=20261023.6';
 import {setupUserAdmin} from './user-admin.js?v=20261023.6';
 import {client,unwrap,invoke,call} from './supabase-client.js';
 import {login,logout,session,signup} from './auth.js';
 import {changePassword} from './change-password.js';
-import {RemoteRepository} from './remote-repository.js?v=20261023.16';
-import {history,renderHistory} from './historico.js?v=20261023.16';
+import {RemoteRepository} from './remote-repository.js?v=20261024.1';
+import {history,renderHistory} from './historico.js?v=20261024.1';
 import {invite,accept,revoke,grant} from './convidar.js';
 import {upload,watchJob,download,mimes} from './upload.js';
 import {canDelete,canEdit} from './permissions.js';
@@ -61,7 +61,7 @@ function decorate(repo){
  const role=repo.role(workspace),editable=board?canEdit(role,repo.members.get(board.id)):role==='owner';
  const badge=document.querySelector('.local-badge');if(badge)badge.textContent='● Sincronizado';
  document.querySelectorAll('[data-action^="delete-"]').forEach(b=>{b.hidden=!canDelete(role);});
- document.querySelectorAll('[data-action="edit-workspace"],[data-action="new-board"],[data-action="edit-company"]').forEach(b=>{b.hidden=role!=='owner';});
+ document.querySelectorAll('[data-action="edit-workspace"],[data-action="rename-workspace"],[data-action="new-board"],[data-action="edit-company"]').forEach(b=>{b.hidden=role!=='owner';});
  document.querySelectorAll('[data-action="cell-assignees"], [data-task], [data-date-task] input, [data-date-task] button, [data-quick-group] input, [data-action="add-column"], [data-action="checklist"], [data-action="new-task"], [data-action="new-group"], [data-action="edit-group"]').forEach(b=>{b.disabled=!editable;});
  if(ui.current().page==='settings'){document.querySelectorAll('.inline-note').forEach(n=>{if(n.textContent.includes('Perfil local nesta etapa'))n.remove();});const drive=document.querySelector('[data-action="edit-integration"][data-id="drive"]');if(drive&&window.WorkshAccountRole!=='guest'){drive.hidden=true;const connect=document.createElement('button');connect.className='button primary';connect.textContent='Conectar meu Google Drive';drive.after(connect);connect.onclick=()=>attempt(async()=>{await connectOwnerDrive();});}return;}
  if(!document.getElementById('cloudTools')){const bar=document.createElement('div');bar.id='cloudTools';bar.className='toolbar';bar.innerHTML='<button class="button" data-cloud="invite">Convidar</button><button class="button" data-cloud="access">Acessos</button><button class="button" data-cloud="history">Histórico do painel</button><button class="button" data-cloud="files">Arquivos</button><button class="button" data-cloud="drive">Conectar Drive</button><button class="button" data-cloud="more">Mais tarefas</button>';document.getElementById('main').prepend(bar);

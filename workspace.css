@@ -65,3 +65,5 @@ html[data-saving="true"] main input, html[data-saving="true"] aside button { poi
 .checklist-people summary{cursor:pointer;font-size:12px;color:var(--blue);padding:7px 0}.checklist-assignees{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}.checklist-detail-row .checklist-assignees label{display:flex;align-items:center;gap:9px;padding:8px;border:1px solid var(--line);border-radius:7px}.checklist-assignees input{width:auto}.checklist-assignees .avatar{width:40px;height:40px}
 
 .task-assignees .person-badge{font-size:13px;font-weight:500}
+
+.rename-error{color:#d94b68}.rename-workspace{margin-top:-5px;margin-bottom:4px}.rename-workspace .ui-icon{width:15px;height:15px}
