@@ -1,4 +1,4 @@
-import {buildProjectHTML,escapeHTML as esc} from './project-render.js?v=20261023.14';
+import {buildProjectHTML,escapeHTML as esc} from './project-render.js?v=20261023.15';
 async function embeddedLogo(url){
  if(!url)return null;if(/^data:image\/(png|webp|jpeg);base64,/i.test(url))return url;
  try{const response=await fetch(url);if(!response.ok)return null;const blob=await response.blob();if(blob.size>1048576||!['image/png','image/jpeg','image/webp'].includes(blob.type))return null;return await new Promise(resolve=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>resolve(null);r.readAsDataURL(blob);});}catch{return null;}

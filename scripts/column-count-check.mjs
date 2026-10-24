@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+const source=readFileSync(new URL('../workspace.js',import.meta.url),'utf8');
+const saved=Array.from({length:65},(_,i)=>({id:'c_'+i,name:'Column '+i,type:'text'}));
+const context={board:()=>({columns:saved}),baseColumns:[],columnTypes:{text:'Texto'}};
+vm.createContext(context);vm.runInContext(source.slice(source.indexOf('function columns()'),source.indexOf('function avatar(')),context);
+assert.equal(context.columns().length,65);assert.equal(saved.length,65);assert.equal(context.columns().at(-1).id,'c_64');
+assert.ok(source.includes('tabindex="0" role="region"'));assert.ok(source.includes('<colgroup>'));
+console.log('PASS: 65 columns remain visible without truncation; panel has a keyboard-accessible scrolling region and proportional column sizing.');
