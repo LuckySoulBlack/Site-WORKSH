@@ -1,3 +1,4 @@
+import {readTaskAssignees} from './task-assignees.js';
 import {signedCompanyLogos} from './company-assets.js?v=20261023.10';
 import {signedAvatars} from './profile-photos.js';
 import {client,unwrap,call} from './supabase-client.js';
@@ -8,14 +9,14 @@ const tableRows=d=>{
  const out={boards:[],groups:[],tasks:[],comments:[]};
  for(const w of d.workspaces)for(const b of w.boards){out.boards.push({id:b.id,workspace_id:w.id,name:b.name,description:b.description||'',created_by:b.created_by||d.user_id,_version:b.updated_at||null});
  for(const [position,g] of b.groups.entries())out.groups.push({id:g.id,board_id:b.id,name:g.name,position,_version:g.updated_at||null});
- for(const [position,t]of b.tasks.entries()){out.tasks.push({id:t.id,board_id:b.id,group_id:t.group||null,title:t.title,description:t.description||'',link_url:t.link_url||null,status:t.status,position,created_by:t.created_by||d.user_id,due:t.due||null,priority:t.priority||'normal',checklist:t.checklist||[],assignee_id:t.person||null,...(window.WorkshBoardFeatures?{start_date:t.start_date||null,custom_values:t.custom_values||{}}:{}),_version:t.updated_at||null});
+ for(const [position,t]of b.tasks.entries()){out.tasks.push({id:t.id,board_id:b.id,group_id:t.group||null,title:t.title,description:t.description||'',link_url:t.link_url||null,status:t.status,position,created_by:t.created_by||d.user_id,due:t.due||null,priority:t.priority||'normal',checklist:t.checklist||[],assignee_id:t.person||null,...(window.WorkshCooperativeTasks?{assignee_ids:[...new Set([t.person,...(t.assignees||[])].filter(Boolean))]}:{}),...(window.WorkshBoardFeatures?{start_date:t.start_date||null,custom_values:t.custom_values||{}}:{}),_version:t.updated_at||null});
  for(const c of t.comments||[])out.comments.push({id:c.id,board_id:b.id,task_id:t.id,author_id:c.author_id||d.user_id,content:c.text,_version:c.updated_at||null});}}
  return out;
 };
 export class RemoteRepository {
  constructor(identity,ui){this.identity=identity;this.ui=ui;this.baseline=null;this.busy=false;this.loaded=new Set();this.cursors=new Map();this.members=new Map();}
  async load(){
- window.WorkshBoardFeatures=await call('board_features').catch(()=>false);
+ window.WorkshBoardFeatures=await call('board_features').catch(()=>false);window.WorkshCooperativeTasks=await call('cooperative_tasks').catch(()=>false);
  const [workspaces,boards,profiles]=await Promise.all([
  page('workspaces',workspaceColumns,{},null,100),page('boards','id,workspace_id,name,description,created_by,created_at,updated_at',{},null,100),
  unwrap(client().from('profiles').select(window.WorkshBoardFeatures?'id,full_name,phone,job,theme,avatar_path':'id,full_name,phone,job,theme').eq('id',this.identity.id).single())]);
@@ -32,9 +33,10 @@ export class RemoteRepository {
  unwrap(client().from('groups').select('id,name,position,board_id,updated_at').eq('board_id',id).order('position').limit(1000)),
  page('comments','id,board_id,task_id,author_id,content,created_at,updated_at',filters,null,100),
  unwrap(client().from('board_members').select('user_id,board_id,can_edit').eq('board_id',id)),call(window.WorkshBoardFeatures?'board_people':'shared_profiles',{b:id}),unwrap(client().from('board_settings').select('id,key,value,updated_at').eq('board_id',id).eq('key','columns'))]);
+ const assignments=window.WorkshCooperativeTasks?await readTaskAssignees(tasks.map(t=>t.id)):[];board._peopleIds=names.map(p=>p.id);
  await signedAvatars(names);board._columnSetting=settings[0]||null;if(settings[0])board.columns=settings[0].value.columns;
  this.members.set(id,members.find(x=>x.user_id===this.identity.id));
- const mapped=tasks.map(t=>({...t,group:t.group_id,person:t.assignee_id||'',due:t.due||'',comments:comments.filter(c=>c.task_id===t.id).map(c=>({...c,text:c.content,date:c.created_at}))}));
+ const mapped=tasks.map(t=>({...t,group:t.group_id,person:t.assignee_id||'',assignees:[...new Set([t.assignee_id,...assignments.filter(a=>a.task_id===t.id).map(a=>a.user_id)].filter(Boolean))],due:t.due||'',comments:comments.filter(c=>c.task_id===t.id).map(c=>({...c,text:c.content,date:c.created_at}))}));
  board.tasks=more?[...board.tasks,...mapped.filter(t=>!board.tasks.some(x=>x.id===t.id))]:mapped;board.groups=groups;
  board._hasMore=tasks.length===20;this.cursors.set(id,tasks.at(-1)||null);
  const w=data.workspaces.find(w=>w.boards.some(b=>b.id===id));const people=new Map(w.people.map(p=>[p.id,p]));names.forEach(p=>people.set(p.id,{id:p.id,name:p.full_name||'Participante',avatar_path:p.avatar_path,avatar_url:p.avatar_url,email:'',role:p.id===w.owner_id?'Proprietário':'Membro'}));w.people=[...people.values()];
@@ -54,11 +56,11 @@ export class RemoteRepository {
  const previous=old?{name:old.name,description:old.description||'',modules:old.modules,company:companyRecord(old.company)}:null;
  if(this.role(w)==='owner'&&!same(values,previous)){changes.push({table:'workspaces',op:'update',id:w.id,version:old?.updated_at||null,values});w.company={...values.company,logo_url:w.id===this.ui.current().workspace?.id?next.company.logo_url:w.company?.logo_url};}}
  const a=tableRows(before),b=tableRows(next);
- const mutable={boards:['name','description'],groups:['name','position'],tasks:['group_id','title','description','link_url','status','position','due','priority','checklist','assignee_id',...(window.WorkshBoardFeatures?['start_date','custom_values']:[])],comments:['content']};
+ const mutable={boards:['name','description'],groups:['name','position'],tasks:['group_id','title','description','link_url','status','position','due','priority','checklist','assignee_id',...(window.WorkshCooperativeTasks?['assignee_ids']:[]),...(window.WorkshBoardFeatures?['start_date','custom_values']:[])],comments:['content']};
  for(const table of ['boards','groups','tasks','comments'])for(const row of b[table]){
  const old=a[table].find(x=>x.id===row.id);
  if(!old){const {_version,...values}=row;changes.push({table,op:'insert',values});}
- else {const values={};for(const key of mutable[table])if(!same(row[key],old[key]))values[key]=row[key];if(Object.keys(values).length)changes.push({table,op:'update',id:row.id,version:old._version,values});}}
+ else {const values={};for(const key of mutable[table])if(!same(row[key],old[key]))values[key]=row[key];if(table==='tasks'&&values.assignee_ids)values.assignee_id=row.assignee_id;if(Object.keys(values).length)changes.push({table,op:'update',id:row.id,version:old._version,values});}}
  for(const table of ['comments','tasks','groups','boards'])for(const row of a[table].filter(row=>!b[table].some(x=>x.id===row.id)))changes.push({table,op:'delete',id:row.id,version:row._version});
  for(const w of before.workspaces.filter(w=>!next.workspaces.some(x=>x.id===w.id)))changes.push({table:'workspaces',op:'delete',id:w.id,version:w.updated_at||null});
  for(const w of next.workspaces)for(const board of w.boards){const previous=before.workspaces.flatMap(w=>w.boards).find(b=>b.id===board.id);if(board.columns&&!same(board.columns,previous?.columns)){const setting=previous?._columnSetting;const id=setting?.id||crypto.randomUUID();board._columnSetting={id,key:'columns',value:{columns:board.columns}};changes.push(setting?{table:'board_settings',op:'update',id,version:setting.updated_at,values:{value:{columns:board.columns}}}:{table:'board_settings',op:'insert',values:{id,board_id:board.id,key:'columns',value:{columns:board.columns}}});}}

@@ -1,4 +1,4 @@
-import {projectCSS,renderProject} from './project-render.js?v=20261023.15';
+import {projectCSS,renderProject} from './project-render.js?v=20261023.16';
 const style=document.createElement('style');style.textContent=projectCSS;document.head.append(style);
 const status=document.getElementById('projectStatus'),content=document.getElementById('sharedProject'),token=location.hash.slice(1);
 let running=false,stopped=false;
